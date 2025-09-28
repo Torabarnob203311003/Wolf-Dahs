@@ -3,13 +3,14 @@ import Layout from "./components/shared/Layout";
 import Dashboard from "./components/Dashboard";
 import Products from "./components/Cards";
 import Organizers from "./components/Organizers";
-import Tournaments from "./components/Tournaments";
+import Tournaments from "./components/Winner";
 import UserManagement from "./components/UserManagement";
 import Payments from "./components/Payments";
 import Insights from "./components/Insights";
 import Settings from "./components/Settings";
 import Login from "./components/Login";
 import Cards from "./components/Cards";
+import Winner from "./components/Winner";
 
 function App() {
   return (
@@ -21,10 +22,10 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="cards" element={<Cards />} />
-          <Route path="users" element={<Organizers />} />
+          <Route path="" element={<Organizers />} />
           <Route path="winner" element={<Tournaments />} />
-          <Route path="settings" element={<UserManagement />} />
-          <Route path="payments" element={<Payments />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="payments" element={<Winner />} />
           <Route path="insights" element={<Insights />} />
           <Route path="settings" element={<Settings />} />
         </Route>

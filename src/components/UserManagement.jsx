@@ -1,139 +1,166 @@
 import React, { useState } from "react";
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { Search, Eye, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 function UserManagement() {
   const [users, setUsers] = useState([
     {
       id: 1,
-      name: 'Samuel Reed',
-      email: 'samuel.reed@example.com',
-      phone: '+44 7894 123456',
-      role: 'Community Captain',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
+      name: 'Savannah Nguyen',
+      email: 'billiander@example.com',
+      tracks: 30,
+      ticketId: '#000095',
+      status: 'Confirmed'
     },
     {
       id: 2,
-      name: 'Tanya Bennett',
-      email: 'tanya.bennett@example.com',
-      phone: '+44 7891 654321',
-      role: 'Organizer',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b2d73b5f?w=40&h=40&fit=crop&crop=face'
+      name: 'Annette Black',
+      email: 'michael.mitc@example.com',
+      tracks: 20,
+      ticketId: '#087423',
+      status: 'Pending'
     },
     {
       id: 3,
-      name: 'Liam Wang',
-      email: 'liam.wang@gmail.com',
-      phone: '+44 7845 987654',
-      role: 'Community Captain',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face'
+      name: 'Cody Fisher',
+      email: 'felicia.reid@example.com',
+      tracks: 30,
+      ticketId: '#006468',
+      status: 'Confirmed'
     },
     {
       id: 4,
-      name: 'Zara El-Amin',
-      email: 'zara.elamin@email.com',
-      phone: '+44 7812 345678',
-      role: 'Team Captain',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face'
+      name: 'Brooklyn Simmons',
+      email: 'tim.jennings@example.com',
+      tracks: 20,
+      ticketId: '#0000684',
+      status: 'Pending'
     },
     {
       id: 5,
-      name: 'Emma Johnson',
-      email: 'emma.johnson@email.com',
-      phone: '+44 7823 456789',
-      role: 'Community Captain',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face'
+      name: 'Ralph Edwards',
+      email: 'sara.cruz@example.com',
+      tracks: 10,
+      ticketId: '#006548',
+      status: 'Confirmed'
     },
     {
       id: 6,
-      name: 'Alex Patel',
-      email: 'alex.patel@example.com',
-      phone: '+44 7834 567890',
-      role: 'Manager',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face'
+      name: 'Courtney Henry',
+      email: 'jackson@example.com',
+      tracks: 20,
+      ticketId: '#001548',
+      status: 'Pending'
+    },
+    {
+      id: 7,
+      name: 'Bessie Cooper',
+      email: 'dolores@example.com',
+      tracks: 18,
+      ticketId: '#000463',
+      status: 'Confirmed'
+    },
+    {
+      id: 8,
+      name: 'Esther Howard',
+      email: 'curtis.weaver@example.com',
+      tracks: 34,
+      ticketId: '#086956',
+      status: 'Pending'
+    },
+    {
+      id: 9,
+      name: 'Eleanor Pena',
+      email: 'tanya.hill@example.com',
+      tracks: 18,
+      ticketId: '#003454',
+      status: 'Confirmed'
+    },
+    {
+      id: 10,
+      name: 'Cameron Williamson',
+      email: 'nevaeh.simmons@example.com',
+      tracks: 18,
+      ticketId: '#006563',
+      status: 'Pending'
     }
   ]);
 
-  const handleEdit = (userId) => {
-    console.log('Edit user:', userId);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleDelete = (userId) => {
     setUsers(users.filter(user => user.id !== userId));
   };
 
-  const handleAddUser = () => {
-    console.log('Add new user');
+  const handleView = (userId) => {
+    console.log('View user:', userId);
+  };
+
+  const getStatusColor = (status) => {
+    return status === 'Confirmed' 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-red-100 text-red-800';
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white rounded-lg shadow-sm">
+    <div className="bg-black min-h-screen text-white">
+      <div style={{backgroundColor: '#282727'}} className="rounded-lg mx-4 my-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-900">User Management</h1>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleAddUser}
-              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add User
-            </button>
+        <div className="p-6 border-b border-gray-700">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-medium text-white">Users List</h1>
             <div className="relative">
               <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search users..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-black border border-gray-600 rounded-md pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-gray-500 text-sm"
               />
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div style={{backgroundColor: '#282727'}} className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left py-3 px-6 font-medium text-gray-700">Name</th>
-                <th className="text-left py-3 px-6 font-medium text-gray-700">Email</th>
-                <th className="text-left py-3 px-6 font-medium text-gray-700">Phone</th>
-                <th className="text-left py-3 px-6 font-medium text-gray-700">Role</th>
-                <th className="text-left py-3 px-6 font-medium text-gray-700">Actions</th>
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">NO</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Name</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Email</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Tracks</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Ticket ID</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Status</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+            <tbody>
+              {users.map((user, index) => (
+                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-800/30">
+                  <td className="py-4 px-6 text-gray-300 text-sm">{index + 1}</td>
+                  <td className="py-4 px-6 text-white text-sm font-medium">{user.name}</td>
+                  <td className="py-4 px-6 text-gray-300 text-sm">{user.email}</td>
+                  <td className="py-4 px-6 text-gray-300 text-sm">{user.tracks}</td>
+                  <td className="py-4 px-6 text-gray-300 text-sm">{user.ticketId}</td>
                   <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <span className="font-medium text-gray-900">{user.name}</span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-gray-600">{user.email}</td>
-                  <td className="py-4 px-6 text-gray-600">{user.phone}</td>
-                  <td className="py-4 px-6">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {user.role}
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
+                      {user.status}
                     </span>
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleEdit(user.id)}
-                        className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Edit user"
+                        onClick={() => handleView(user.id)}
+                        className="p-2 text-yellow-400 hover:text-yellow-300 hover:bg-black rounded-lg transition-colors"
+                        title="View user"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Eye className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(user.id)}
-                        className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 text-red-400 hover:text-red-300 hover:bg-black rounded-lg transition-colors"
                         title="Delete user"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -144,6 +171,31 @@ function UserManagement() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex items-center justify-between p-6 border-t border-gray-700">
+          <div className="flex items-center gap-2">
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-black rounded transition-colors">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button className="px-3 py-1 bg-yellow-400 text-black rounded text-sm font-medium">
+              1
+            </button>
+            <button className="px-3 py-1 text-gray-300 hover:text-white hover:bg-black rounded text-sm">
+              2
+            </button>
+            <button className="px-3 py-1 text-gray-300 hover:text-white hover:bg-black rounded text-sm">
+              3
+            </button>
+            <span className="px-2 text-gray-400">...</span>
+            <button className="px-3 py-1 text-gray-300 hover:text-white hover:bg-black rounded text-sm">
+              440
+            </button>
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-black rounded transition-colors">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
