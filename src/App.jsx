@@ -1,16 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/shared/Layout";
 import Dashboard from "./components/Dashboard";
-import Products from "./components/Cards";
 import Organizers from "./components/Organizers";
 import Tournaments from "./components/Winner";
 import UserManagement from "./components/UserManagement";
-import Payments from "./components/Payments";
 import Insights from "./components/Insights";
 import Settings from "./components/Settings";
 import Login from "./components/Login";
 import Cards from "./components/Cards";
 import Winner from "./components/Winner";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -18,6 +17,8 @@ function App() {
       <Routes>
         {/* Routes outside layout */}
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Register />} />
+        
         {/* Routes with layout */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />

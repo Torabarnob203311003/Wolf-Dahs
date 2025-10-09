@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Eye, EyeOff, Mail } from "lucide-react";
 import logo from '../assets/logo.png';
 
 function Login() {
@@ -23,9 +23,9 @@ function Login() {
     const newErrors = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+      newErrors.username = "Email is required";
     } else if (formData.username.length > 100) {
-      newErrors.username = "Username must be less than 100 characters";
+      newErrors.username = "Email must be less than 100 characters";
     }
 
     if (!formData.password) {
@@ -45,6 +45,7 @@ function Login() {
 
     if (Object.keys(newErrors).length === 0) {
       console.log("Login data:", formData);
+      
       alert("Login successful!");
     } else {
       setErrors(newErrors);
@@ -53,38 +54,38 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: "#121212" }}>
-      <div className="w-full max-w-3xl bg-[#272828] p-6 rounded-lg shadow-lg">
-        <div className="max-w-lg mx-auto">
+      <div className="w-full max-w-xl bg-[#272828] p-6 rounded-lg shadow-lg">
+        <div className="max-w-md mx-auto">
           <div className="mb-8 text-center">
-            <div className="mb-6 flex justify-center">
+            <div className="mb-6 flex justify-start">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
                   <img src={logo} alt="Logo" className="h-20 w-20" />
                 </div>
               </div>
             </div>
-            <h1 className="mb-2 text-3xl font-bold" style={{ color: "#FAFAFA" }}>Login</h1>
-            <p style={{ color: "#999999" }}>Let's login into your account first</p>
+            <h1 className="mb-2 text-3xl font-bold text-start" style={{ color: "#FAFAFA" }}>Login</h1>
+            <p style={{ color: "#999999" }} className="text-start">Let's login into your account first</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: "#FAFAFA" }}>
-                Username
+                Email
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2" style={{ color: "#999999" }} />
+                <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2" style={{ color: "#999999" }} />
                 <input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  placeholder="Enter your username"
+                  placeholder="example@gmail.com"
                   className="w-full pl-10 pr-4 py-2 rounded-md border outline-none focus:ring-2 transition-all"
                   style={{
-                    backgroundColor: "#333333",
+                    backgroundColor: "#ffffff",
                     borderColor: "#404040",
-                    color: "#FAFAFA",
+                    color: "#000000",
                     "--tw-ring-color": "#FF9933"
                   }}
                 />
@@ -108,9 +109,9 @@ function Login() {
                   placeholder="Enter your password"
                   className="w-full pl-10 pr-10 py-2 rounded-md border outline-none focus:ring-2 transition-all"
                   style={{
-                    backgroundColor: "#333333",
+                    backgroundColor: "#ffffff",
                     borderColor: "#404040",
-                    color: "#FAFAFA",
+                    color: "#000000",
                     "--tw-ring-color": "#FF9933"
                   }}
                 />
@@ -147,14 +148,6 @@ function Login() {
                   Remember Me
                 </label>
               </div>
-              <button
-                type="button"
-                className="text-sm transition-all hover:underline"
-                style={{ color: "#FF9933" }}
-                onClick={() => alert("Password reset functionality coming soon!")}
-              >
-                Forgot Password?
-              </button>
             </div>
 
             <button
@@ -172,31 +165,30 @@ function Login() {
 
             <p className="text-center text-sm" style={{ color: "#999999" }}>
               Don't have an account?{" "}
-              <button
-                type="button"
+              <a
+
+                href="/signup"
                 className="font-semibold transition-all hover:underline"
                 style={{ color: "#FF9933" }}
-                onClick={() => alert("Sign up functionality coming soon!")}
               >
                 Sign Up
-              </button>
+              </a>
             </p>
           </form>
 
           <div className="mt-8 text-center text-xs" style={{ color: "#999999" }}>
             © 2025 <span className="font-semibold">NORTHSTAR</span> COMPETITIONS © 2025 · All rights reserved ·{" "}
-            <button
-              type="button"
+            <a
+              href="/terms"
               className="hover:underline"
               style={{ color: "#FF9933" }}
-              onClick={() => alert("Terms & Conditions coming soon!")}
             >
               Term & Condition
-            </button>
+            </a>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
