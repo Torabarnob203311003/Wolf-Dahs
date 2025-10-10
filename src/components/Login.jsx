@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { User, Lock, Eye, EyeOff, Mail } from "lucide-react";
+import { Lock, Eye, EyeOff, Mail } from "lucide-react";
 import logo from '../assets/logo.png';
+import axiosSecure from "../lib/axiosSecure";
+import toast, { Toaster } from "react-hot-toast";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,6 +12,7 @@ function Login() {
     rememberMe: false,
   });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -39,15 +42,60 @@ function Login() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
 
     if (Object.keys(newErrors).length === 0) {
-      console.log("Login data:", formData);
-      
-      alert("Login successful!");
+      try {
+        setLoading(true);
+
+        const response = await axiosSecure.post('/users/login', {
+          email: formData.username,
+          password: formData.password
+        });
+
+        if (response.data.success) {
+          setLoading(false);
+          toast('Login successful!',
+            {
+              icon: '✅',
+              style: {
+                borderRadius: '30px',
+                background: '#10B981',
+                color: '#fff',
+                fontSize: '18px',
+              },
+            }
+          );
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 700);
+        };
+
+      } catch (error) {
+        setLoading(false);
+        // console.error('Login error:', error.response.data.message);
+        // alert(error?.message || "Login failed. Please try again.");
+
+        toast(`${error.response?.data?.message || "Login failed. Please try again."}`,
+          {
+            icon: '❌',
+            style: {
+              borderRadius: '30px',
+              background: '#EF4444',
+              color: '#fff',
+              fontSize: '18px',
+            },
+          }
+        );
+
+        setErrors({ submit: error.response?.data?.message || "Login failed" });
+      } finally {
+        setLoading(false);
+      }
     } else {
+      setLoading(false);
       setErrors(newErrors);
     }
   };
@@ -160,7 +208,7 @@ function Login() {
               onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
               onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
 
             <p className="text-center text-sm" style={{ color: "#999999" }}>
@@ -187,8 +235,14 @@ function Login() {
             </a>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
+
+    </div>
   );
 }
 

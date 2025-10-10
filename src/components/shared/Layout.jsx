@@ -13,50 +13,45 @@ function Layout() {
         <br />
         <nav className="flex flex-col gap-8 mt-8">
           <NavLink to="/" end className={({ isActive }) =>
-            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${
-              isActive
-                ? 'bg-[#E28B27] text-white'
-                : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
             }`
           }>
             <LayoutDashboard className="w-7 h-7" />
             Dashboards
           </NavLink>
           <NavLink to="/cards" className={({ isActive }) =>
-            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${
-              isActive
-                ? 'bg-[#E28B27] text-white'
-                : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
             }`
           }>
             <CreditCard className="w-7 h-7" />
             Cards Management
           </NavLink>
           <NavLink to="/users" className={({ isActive }) =>
-            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${
-              isActive
-                ? 'bg-[#E28B27] text-white'
-                : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
             }`
           }>
             <Users className="w-7 h-7" />
             Users Management
           </NavLink>
           <NavLink to="/winner" className={({ isActive }) =>
-            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${
-              isActive
-                ? 'bg-[#E28B27] text-white'
-                : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
             }`
           }>
             <Ticket className="w-7 h-7" />
             Winner Selection
           </NavLink>
           <NavLink to="/settings" className={({ isActive }) =>
-            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${
-              isActive
-                ? 'bg-[#E28B27] text-white'
-                : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            `flex items-center gap-4 p-4 rounded-xl font-semibold text-lg transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
             }`
           }>
             <Settings className="w-7 h-7" />
@@ -65,7 +60,7 @@ function Layout() {
         </nav>
       </aside>
       {/* Main content */}
-      <div className="flex-1 flex flex-col pb-24 ml-64">
+      <div className="flex-1 flex flex-col ml-64">
         {/* Header */}
         <header className="bg-[#282727] shadow p-8 flex items-center justify-end pr-10 fixed top-0 left-64 right-0 z-10">
           <div className="flex items-center gap-4">
