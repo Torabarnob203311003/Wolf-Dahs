@@ -272,7 +272,7 @@
 
 
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 
@@ -501,7 +501,7 @@ const ManageRaffleCards = () => {
             </button>
           </div>
         )}
-      </div>
+      </div>    
     </div>
   );
 };
