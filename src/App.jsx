@@ -10,6 +10,8 @@ import Login from "./components/Login";
 import Cards from "./components/Cards";
 import Winner from "./components/Winner";
 import Register from "./components/Register";
+import AddRaffleCard from "./components/AddRaffles";
+import EditRaffleCard from "./components/EditRaffle";
 
 function App() {
   return (
@@ -18,11 +20,13 @@ function App() {
         {/* Routes outside layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
-        
+
         {/* Routes with layout */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="cards" element={<Cards />} />
+          <Route path="add-raffle" element={<AddRaffleCard />} />
+          <Route path="edit-raffle/:id" element={<EditRaffleCard />} />
           <Route path="" element={<Organizers />} />
           <Route path="winner" element={<Tournaments />} />
           <Route path="users" element={<UserManagement />} />

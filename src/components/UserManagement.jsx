@@ -208,6 +208,7 @@
 import { useState, useEffect } from "react";
 import { Search, Eye, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import axiosSecure from "../lib/axiosSecure";
+import { ScaleLoader } from "react-spinners";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -297,7 +298,7 @@ function UserManagement() {
                 placeholder="Search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-black border border-gray-600 rounded-md pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-gray-500 text-sm"
+                className="bg-[#3C3C3C] border border-gray-600 rounded-md pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-gray-500 text-sm"
               />
             </div>
           </div>
@@ -306,7 +307,14 @@ function UserManagement() {
         {/* Loading State */}
         {loading && (
           <div className="p-6 text-center text-gray-400">
-            <p>Loading users...</p>
+            <ScaleLoader
+              color='#FF9933'
+              loading={loading}
+              cssOverride={{ display: "block", margin: "0 auto", borderColor: "orange" }}
+              size={150}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
           </div>
         )}
 
