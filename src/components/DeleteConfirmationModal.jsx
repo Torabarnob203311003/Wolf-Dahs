@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 const DeleteConfirmationModal = ({
@@ -10,28 +9,11 @@ const DeleteConfirmationModal = ({
     isLoading = false,
     isDangerous = true,
     onConfirm = () => { },
-    onCancel = () => { },
-    inputRequired = false,
-    inputPlaceholder = "Type to confirm",
-    requiredInputValue = ""
+    onCancel = () => { }
 }) => {
-    const [inputValue, setInputValue] = useState('');
-
     if (!isOpen) return null;
 
-    const isConfirmDisabled = inputRequired
-        ? inputValue !== requiredInputValue || isLoading
-        : isLoading;
-
-    const handleConfirm = () => {
-        if (inputRequired && inputValue !== requiredInputValue) {
-            return;
-        }
-        onConfirm();
-    };
-
     const handleCancel = () => {
-        setInputValue('');
         onCancel();
     };
 
@@ -66,33 +48,6 @@ const DeleteConfirmationModal = ({
                         {description}
                     </p>
 
-                    {/* Input Field (if required) */}
-                    {inputRequired && (
-                        <div className="mb-6">
-                            <label className="block text-sm text-gray-400 mb-2">
-                                {requiredInputValue ? `Type "${requiredInputValue}" to confirm` : "Confirm by typing"}
-                            </label>
-                            <input
-                                type="text"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                placeholder={inputPlaceholder}
-                                className="w-full bg-[#121212] border border-gray-600 rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
-                                autoFocus
-                            />
-                            {requiredInputValue && (
-                                <p className={`text-sm mt-2 ${inputValue === requiredInputValue
-                                        ? 'text-green-500'
-                                        : 'text-gray-500'
-                                    }`}>
-                                    {inputValue === requiredInputValue
-                                        ? '✓ Ready to confirm'
-                                        : `${requiredInputValue.length - inputValue.length} characters to match`}
-                                </p>
-                            )}
-                        </div>
-                    )}
-
                     {/* Buttons */}
                     <div className="flex gap-3 justify-center">
                         <button
@@ -103,11 +58,11 @@ const DeleteConfirmationModal = ({
                             {cancelText}
                         </button>
                         <button
-                            onClick={handleConfirm}
-                            disabled={isConfirmDisabled}
+                            onClick={onConfirm}
+                            disabled={isLoading}
                             className={`flex-1 px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed ${isDangerous
-                                    ? 'bg-red-600 hover:bg-red-700 text-white'
-                                    : 'bg-orange-500 hover:bg-orange-600 text-white'
+                                ? 'bg-red-600 hover:bg-red-700 text-white'
+                                : 'bg-orange-500 hover:bg-orange-600 text-white'
                                 }`}
                         >
                             {isLoading ? 'Deleting...' : confirmText}

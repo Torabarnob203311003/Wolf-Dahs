@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react';
 import { Search, Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 import { ClipLoader, ScaleLoader } from "react-spinners";
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const ManageRaffleCards = () => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [raffleCards, setRaffleCards] = useState([]);
@@ -11,6 +15,49 @@ const ManageRaffleCards = () => {
   const [error, setError] = useState(null);
 
   const itemsPerPage = 10;
+
+  // STEP 1: When user clicks delete button
+  const handleDeleteButtonClick = (card) => {
+    setCardToDelete(card);
+    setShowDeleteModal(true);
+  };
+
+  // STEP 2: When user confirms deletion in modal
+  const handleConfirmDelete = async () => {
+    if (!cardToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      // Make API call to delete
+      const response = await axiosSecure.delete(
+        `/delete-raffles/${cardToDelete._id}`
+      );
+
+      console.log('Card deleted:', response.data);
+
+      // Remove card from local state
+      setRaffleCards(
+        raffleCards.filter(card => card._id !== cardToDelete._id)
+      );
+
+      // Close modal
+      setShowDeleteModal(false);
+      setCardToDelete(null);
+
+      alert('Card deleted successfully!');
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Failed to delete card. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // STEP 3: When user cancels deletion
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setCardToDelete(null);
+  };
 
   useEffect(() => {
     fetchRaffleCards();
@@ -174,8 +221,12 @@ const ManageRaffleCards = () => {
                         <button onClick={() => window.location.href = `/edit-raffle/${card._id}`} className="bg-yellow-500 hover:bg-yellow-600 p-2 rounded-lg transition-colors">
                           <Edit className="text-white" size={16} />
                         </button>
-                        <button className="bg-red-500 hover:bg-red-600 p-2 rounded-lg transition-colors">
-                          <Trash2 className="text-white" size={16} />
+
+                        <button
+                          onClick={() => handleDeleteButtonClick(card)}
+                          className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white flex items-center gap-1 transition rounded-lg"
+                        >
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
@@ -235,6 +286,19 @@ const ManageRaffleCards = () => {
           </div>
         )}
       </div>
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        title="Delete Raffle Card?"
+        description={`Are you sure you want to permanently delete "${cardToDelete?.cardName}"? This action cannot be undone.`}
+        confirmText="Delete Card"
+        cancelText="Cancel"
+        isLoading={isDeleting}
+        isDangerous={true}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+
     </div>
   );
 };
