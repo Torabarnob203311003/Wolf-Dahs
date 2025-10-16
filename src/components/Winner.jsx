@@ -1,121 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import axiosSecure from "../lib/axiosSecure";
 
 function Winner() {
-  const [cards, setCards] = useState([
-    {
-      id: 1,
-      cardName: 'BM3 M3',
-      image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 50,
-      status: 'Available'
-    },
-    {
-      id: 2,
-      cardName: 'Floyd Miles',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 100,
-      status: 'Available'
-    },
-    {
-      id: 3,
-      cardName: 'Jane Cooper',
-      image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 10000,
-      status: 'Closed'
-    },
-    {
-      id: 4,
-      cardName: 'Cody Fisher',
-      image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 245,
-      status: 'Available'
-    },
-    {
-      id: 5,
-      cardName: 'Darrell Steward',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 700,
-      status: 'Available'
-    },
-    {
-      id: 6,
-      cardName: 'Theresa Webb',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b2d73b5f?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 1000,
-      status: 'Closed'
-    },
-    {
-      id: 7,
-      cardName: 'Ronald Richards',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 10000,
-      status: 'Closed'
-    },
-    {
-      id: 8,
-      cardName: 'Marvin McKinney',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 254,
-      status: 'Available'
-    },
-    {
-      id: 9,
-      cardName: 'Guy Hawkins',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 956,
-      status: 'Available'
-    },
-    {
-      id: 10,
-      cardName: 'Albert Flores',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop',
-      prizeAmount: 5500,
-      totalTicketLimit: 10000,
-      userTicketLimit: 20,
-      ticketSold: 1000,
-      status: 'Available'
-    }
-  ]);
+  const [cards, setCards] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
 
   const getStatusColor = (status) => {
-    return status === 'Available' 
-      ? 'bg-green-600 text-white' 
+    return status === true
+      ? 'bg-green-600 text-white'
       : 'bg-red-600 text-white';
   };
 
+  const handleView = (id) => {
+    console.log(id);
+    window.location.href = `/winner-selection?raffleId=${id}`
+  }
+
+  async function fetchRaffles() {
+    try {
+      const response = await axiosSecure.get('/raffles/get-all-raffle');
+      setCards(response.data.data);
+      console.log(response.data.data);
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchRaffles();
+  }, [])
+
   return (
     <div className="bg-black min-h-screen text-white">
-      <div style={{backgroundColor: '#282727'}} className="mx-4 my-4">
+      <div style={{ backgroundColor: '#282727' }} className="mx-4 my-4">
         {/* Header with blue border */}
         <div className="p-6 border-b-2 border-blue-500">
           <div className="flex items-center justify-between">
@@ -152,29 +72,29 @@ function Winner() {
             </thead>
             <tbody>
               {cards.map((card, index) => (
-                <tr key={card.id} className="border-b border-gray-700 hover:bg-gray-800/30">
+                <tr key={card._id} className="border-b border-gray-700 hover:bg-gray-800/30">
                   <td className="py-4 px-6 text-gray-300 text-sm">{index + 1}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
                       <img
-                        src={card.image}
-                        alt={card.cardName}
+                        src={card.thumbnail}
+                        alt={card.title}
                         className="w-10 h-10 rounded object-cover"
                       />
-                      <span className="text-white text-sm font-medium">{card.cardName}</span>
+                      <span className="text-white text-sm font-medium">{card.title}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-gray-300 text-sm">{card.prizeAmount}</td>
-                  <td className="py-4 px-6 text-gray-300 text-sm">{card.totalTicketLimit}</td>
-                  <td className="py-4 px-6 text-gray-300 text-sm">{card.userTicketLimit}</td>
+                  <td className="py-4 px-6 text-gray-300 text-sm">{card.price}</td>
+                  <td className="py-4 px-6 text-gray-300 text-sm">{card.totalTicket}</td>
+                  <td className="py-4 px-6 text-gray-300 text-sm">{card.perUserTicketLimit}</td>
                   <td className="py-4 px-6 text-gray-300 text-sm">{card.ticketSold}</td>
                   <td className="py-4 px-6">
                     <span className={`inline-flex items-center px-3 py-1 rounded text-xs font-medium ${getStatusColor(card.status)}`}>
-                      {card.status}
+                      {card.status === true ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td className="py-4 px-6">
-                    <button className="bg-sky-200 hover:bg-blue-700 hover:text-white text-blue-800 px-4 py-1.5 rounded text-sm font-medium transition-colors">
+                    <button onClick={() => handleView(card._id)} className="bg-sky-200 hover:bg-blue-700 hover:text-white text-blue-800 px-4 py-1.5 rounded text-sm font-medium transition-colors">
                       View Details
                     </button>
                   </td>

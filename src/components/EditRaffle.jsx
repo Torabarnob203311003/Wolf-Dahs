@@ -290,7 +290,7 @@ const EditRaffleCard = ({ onBack = () => { } }) => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Amount ($)</label>
+                        <label className="block text-sm font-medium mb-2">Ticket Price ($)</label>
                         <input
                             type="number"
                             name="amount"
@@ -307,7 +307,7 @@ const EditRaffleCard = ({ onBack = () => { } }) => {
                 {/* Ticket Limits */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label className="block text-sm font-medium mb-2">Ticket Limit</label>
+                        <label className="block text-sm font-medium mb-2">Total Ticket</label>
                         <input
                             type="number"
                             name="ticketLimit"

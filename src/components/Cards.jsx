@@ -30,7 +30,7 @@ const ManageRaffleCards = () => {
     try {
       // Make API call to delete
       const response = await axiosSecure.delete(
-        `/delete-raffles/${cardToDelete._id}`
+        `raffles/delete-raffles/${cardToDelete._id}`
       );
 
       console.log('Card deleted:', response.data);
@@ -177,8 +177,8 @@ const ManageRaffleCards = () => {
                 <tr className="border-b border-gray-600">
                   <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">NO</th>
                   <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Card name</th>
-                  <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Prize amount</th>
-                  <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Total ticket limit</th>
+                  <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Ticket Prize</th>
+                  <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Total ticket</th>
                   <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">User ticket limit</th>
                   <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Ticket Sold</th>
                   <th className="text-gray-400 text-left py-4 px-6 font-medium text-sm">Status</th>

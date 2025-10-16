@@ -1,4 +1,3 @@
-import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
 import { LayoutDashboard, CreditCard, Users, Ticket, Settings } from 'lucide-react';
 
@@ -6,7 +5,7 @@ function Layout() {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#282727] border-r border-t border-[#282727] p-4 flex flex-col fixed top-0 left-0 h-screen z-20">
+      {/* <aside className="w-64 bg-[#282727] border-r border-t border-[#282727] p-4 flex flex-col fixed top-0 left-0 h-screen z-20">
         <div className="flex items-center ps-14 gap-0">
           <img src="/logo.svg" alt="Logo" className="h-18 w-18" />
         </div>
@@ -58,7 +57,65 @@ function Layout() {
             Settings
           </NavLink>
         </nav>
+      </aside> */}
+      <aside className="w-64 bg-[#282727] border-r border-t border-[#282727] p-2 flex flex-col fixed top-0 left-0 h-screen z-20">
+        <div className="flex items-center justify-center mb-8">
+          <img src="/logo.svg" alt="Logo" className="h-16 w-16" />
+        </div>
+
+        <nav className="flex flex-col gap-3">
+          <NavLink to="/" end className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <LayoutDashboard className="w-5 h-5" />
+            Dashboards
+          </NavLink>
+
+          <NavLink to="/cards" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <CreditCard className="w-5 h-5" />
+            Cards Management
+          </NavLink>
+
+          <NavLink to="/users" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <Users className="w-5 h-5" />
+            Users Management
+          </NavLink>
+
+          <NavLink to="/winner" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <Ticket className="w-5 h-5" />
+            Winner Selection
+          </NavLink>
+
+          <NavLink to="/settings" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <Settings className="w-5 h-5" />
+            Settings
+          </NavLink>
+        </nav>
       </aside>
+
       {/* Main content */}
       <div className="flex-1 flex flex-col ml-64">
         {/* Header */}
