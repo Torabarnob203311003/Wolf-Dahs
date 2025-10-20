@@ -4,7 +4,6 @@ import axiosSecure from "../lib/axiosSecure";
 
 function Winner() {
   const [cards, setCards] = useState([]);
-
   const [searchTerm, setSearchTerm] = useState('');
 
   const getStatusColor = (status) => {
@@ -52,8 +51,6 @@ function Winner() {
             </div>
           </div>
         </div>
-
-
 
         {/* Table */}
         <div className="overflow-x-auto">

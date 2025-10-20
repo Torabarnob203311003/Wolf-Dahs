@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, CreditCard, Users, Ticket, Settings } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Users, Ticket, Settings, History, HistoryIcon } from 'lucide-react';
 
 function Layout() {
   return (
@@ -102,6 +102,16 @@ function Layout() {
           }>
             <Ticket className="w-5 h-5" />
             Winner Selection
+          </NavLink>
+
+          <NavLink to="/winner-history" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <HistoryIcon className="w-5 h-5" />
+            Winner History
           </NavLink>
 
           <NavLink to="/settings" className={({ isActive }) =>

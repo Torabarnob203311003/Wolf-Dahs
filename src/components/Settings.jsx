@@ -74,7 +74,7 @@ function SettingsProfile() {
             placeholder="Enter Your Display Name"
             value={formData.displayName}
             onChange={(e) => handleInputChange('displayName', e.target.value)}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
           />
         </div>
 
@@ -85,7 +85,7 @@ function SettingsProfile() {
             type="email"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
           />
         </div>
 
@@ -96,7 +96,7 @@ function SettingsProfile() {
             <select
               value={formData.country}
               onChange={(e) => handleInputChange('country', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             >
               <option value="">Select Your Country</option>
               <option value="us">United States</option>
@@ -111,7 +111,7 @@ function SettingsProfile() {
             <select
               value={formData.city}
               onChange={(e) => handleInputChange('city', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             >
               <option value="">Select Your City</option>
               <option value="new-york">New York</option>
@@ -129,7 +129,7 @@ function SettingsProfile() {
             <select
               value={formData.province}
               onChange={(e) => handleInputChange('province', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             >
               <option value="">Select Your Province</option>
               <option value="california">California</option>
@@ -143,7 +143,7 @@ function SettingsProfile() {
             <select
               value={formData.gender}
               onChange={(e) => handleInputChange('gender', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             >
               <option value="">Select Your Gender</option>
               <option value="male">Male</option>
@@ -162,7 +162,7 @@ function SettingsProfile() {
             value={formData.bio}
             onChange={(e) => handleInputChange('bio', e.target.value)}
             rows={4}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"
+            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"
           />
         </div>
       </div>
@@ -183,7 +183,7 @@ function SettingsProfile() {
               placeholder="Enter your old password"
               value={passwordData.oldPassword}
               onChange={(e) => handlePasswordChange('oldPassword', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             />
             <button
               type="button"
@@ -204,7 +204,7 @@ function SettingsProfile() {
               placeholder="Enter new password"
               value={passwordData.newPassword}
               onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             />
             <button
               type="button"
@@ -228,7 +228,7 @@ function SettingsProfile() {
               placeholder="Confirm new password"
               value={passwordData.confirmPassword}
               onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             />
             <button
               type="button"
@@ -250,7 +250,7 @@ function SettingsProfile() {
         <div className="space-y-2">
           <div 
             className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
-              activeTab === 'Basic' ? 'bg-[#E28B27] text-white' : 'bg-gray-700 hover:bg-gray-600'
+              activeTab === 'Basic' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
             }`}
             onClick={() => setActiveTab('Basic')}
           >
@@ -260,7 +260,7 @@ function SettingsProfile() {
           
           <div 
             className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
-              activeTab === 'Change Password' ? 'bg-[#E28B27] text-white' : 'bg-gray-700 hover:bg-gray-600'
+              activeTab === 'Change Password' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
             }`}
             onClick={() => setActiveTab('Change Password')}
           >
@@ -270,7 +270,7 @@ function SettingsProfile() {
           
           <div 
             className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
-              activeTab === 'Notifications' ? 'bg-[#E28B27] text-white' : 'bg-gray-700 hover:bg-gray-600'
+              activeTab === 'Notifications' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
             }`}
             onClick={() => setActiveTab('Notifications')}
           >

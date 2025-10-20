@@ -13,6 +13,7 @@ import Register from "./components/Register";
 import AddRaffleCard from "./components/AddRaffles";
 import EditRaffleCard from "./components/EditRaffle";
 import WinnerSelection from "./components/WinnerSelection";
+import WinnerHistory from "./components/WinnerHistory";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="" element={<Organizers />} />
           <Route path="winner" element={<Tournaments />} />
           <Route path="winner-selection" element={<WinnerSelection />} />
+          <Route path="winner-history" element={<WinnerHistory />} />
           <Route path="users" element={<UserManagement />} />
           <Route path="payments" element={<Winner />} />
           <Route path="insights" element={<Insights />} />
