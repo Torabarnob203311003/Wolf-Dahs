@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Lock, Eye, EyeOff, Mail } from "lucide-react";
 import logo from '../assets/logo.png';
-import axiosSecure from "../lib/axiosSecure";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +13,7 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const {login} = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -50,12 +51,9 @@ function Login() {
       try {
         setLoading(true);
 
-        const response = await axiosSecure.post('/users/login', {
-          email: formData.username,
-          password: formData.password
-        });
+        const response = await login(formData.username, formData.password);
 
-        if (response.data.success) {
+        if (response) {
           setLoading(false);
           toast('Login successful!',
             {

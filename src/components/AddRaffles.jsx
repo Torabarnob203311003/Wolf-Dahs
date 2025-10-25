@@ -289,11 +289,11 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Amount ($)</label>
+                        <label className="block text-sm font-medium mb-2">Per Card Price ($)</label>
                         <input
                             type="number"
                             name="amount"
-                            placeholder="Enter card amount"
+                            placeholder="Enter card price"
                             value={formData.amount}
                             onChange={handleInputChange}
                             step="0.01"
@@ -306,7 +306,7 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
                 {/* Ticket Limits */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label className="block text-sm font-medium mb-2">Ticket Limit</label>
+                        <label className="block text-sm font-medium mb-2">Total Ticket Limit</label>
                         <input
                             type="number"
                             name="ticketLimit"

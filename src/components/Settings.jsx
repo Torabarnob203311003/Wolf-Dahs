@@ -1,27 +1,82 @@
-import React, { useState } from "react";
+
+import { useState, useRef, useEffect } from 'react';
 import { ChevronRight, Edit, Eye, EyeOff } from 'lucide-react';
+import axiosSecure from '../lib/axiosSecure';
+import placeholderImage from "/placeholder.jpg"
 
 function SettingsProfile() {
   const [activeTab, setActiveTab] = useState('Basic');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+  const [profileImage, setProfileImage] = useState(placeholderImage);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // password reset states
+  const [oldPass, setOldPass] = useState('');
+  const [newPass, setNewPass] = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
+
+  const userId = "68f68aef0ad7e0cb33639559";
+
   const [formData, setFormData] = useState({
     displayName: '',
-    email: 'demo@gmail.com',
+    email: '',
     country: '',
     city: '',
     province: '',
     gender: '',
-    bio: ''
+    bio: '',
   });
 
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
+
+  // Fetch user data on component mount
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosSecure.get(`/users/get-single-profile/${userId}`);
+      
+      if (response.data.success) {
+        const user = response.data.data;
+        setUserData(user);
+        
+        // Populate form with existing data
+        setFormData({
+          displayName: user.userName || '',
+          email: user.email || '',
+          country: user.country || '',
+          city: user.city || '',
+          province: user.province || '',
+          gender: user.gender || '',
+          bio: user.bio || '',
+        });
+
+        // Set profile image if exists
+        if (user.photoUrl) {
+          setProfileImage(user.photoUrl);
+        }
+        console.log(user);
+        
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      // Don't show error alert on initial load
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -37,30 +92,198 @@ function SettingsProfile() {
     }));
   };
 
-  const handleSave = () => {
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      // Validate file size (max 20MB)
+      if (file.size > 20 * 1024 * 1024) {
+        alert('Image size should be less than 20MB');
+        return;
+      }
+
+      // Store the file for upload
+      setSelectedFile(file);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = async () => {
     if (activeTab === 'Basic') {
-      console.log('Saving profile data:', formData);
+      try {
+        setLoading(true);
+
+        // Create FormData for multipart/form-data
+        const formDataToSend = new FormData();
+        
+        // Append profile data (only if changed)
+        if (formData.displayName && formData.displayName !== userData?.userName) {
+          formDataToSend.append('userName', formData.displayName);
+        }
+        if (formData.email && formData.email !== userData?.email) {
+          formDataToSend.append('email', formData.email);
+        }
+        if (formData.country) {
+          formDataToSend.append('country', formData.country);
+        }
+        if (formData.city) {
+          formDataToSend.append('city', formData.city);
+        }
+        if (formData.province) {
+          formDataToSend.append('province', formData.province);
+        }
+        if (formData.gender) {
+          formDataToSend.append('gender', formData.gender);
+        }
+        if (formData.bio) {
+          formDataToSend.append('bio', formData.bio);
+        }
+        
+        // Append image file if selected
+        if (selectedFile) {
+          formDataToSend.append('photo', selectedFile);
+        }
+
+        // Check if there's anything to update
+        let hasChanges = false;
+        for (let _ of formDataToSend.entries()) {
+          hasChanges = true;
+          break;
+        }
+
+        if (!hasChanges) {
+          alert('No changes to save');
+          setLoading(false);
+          return;
+        }
+
+        const response = await axiosSecure.patch(
+          `/users/update-profile?id=${userId}`, 
+          formDataToSend,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        );
+
+        if (response.data.success) {
+          alert('Profile updated successfully!');
+          
+          // Update local user data
+          setUserData(response.data.data);
+          
+          // Clear selected file
+          setSelectedFile(null);
+          
+          // Optionally refresh the page or update auth context
+          // window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        const errorMessage = error.response?.data?.message || 
+                            error.response?.data?.errorSources?.[0]?.message ||
+                            'Failed to update profile. Please try again.';
+        alert(errorMessage);
+      } finally {
+        setLoading(false);
+      }
     } else if (activeTab === 'Change Password') {
-      console.log('Saving password data:', passwordData);
+      try {
+        setLoading(true);
+
+        // Validate passwords
+        if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+          alert('Please fill in all password fields');
+          setLoading(false);
+          return;
+        }
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+          alert('New password and confirmation do not match');
+          setLoading(false);
+          return;
+        }
+
+        if (passwordData.newPassword.length < 6) {
+          alert('New password must be at least 6 characters long');
+          setLoading(false);
+          return;
+        }
+
+        const response = await axiosSecure.patch(
+          `/users/change-password?id=${userId}`,
+          {
+            oldPassword: passwordData.oldPassword,
+            newPassword: passwordData.newPassword,
+            confirmPassword: passwordData.confirmPassword
+          }
+        );
+
+        if (response.data.success) {
+          alert('Password changed successfully!');
+          
+          // Clear password fields
+          setPasswordData({
+            oldPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          });
+        }
+      } catch (error) {
+        console.error('Error changing password:', error);
+        const errorMessage = error.response?.data?.message || 
+                            error.response?.data?.errorSources?.[0]?.message ||
+                            'Failed to change password. Please try again.';
+        alert(errorMessage);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const renderBasicContent = () => (
     <>
       <h1 className="text-xl font-medium text-white mb-8">Profile Information</h1>
-      
+
       {/* Photo Profile Section */}
       <div className="mb-8">
         <label className="block text-sm font-medium text-gray-300 mb-3">Photo Profile</label>
         <div className="relative inline-block">
           <img
-            src="https://images.unsplash.com/photo-1494790108755-2616b2d73b5f?w=80&h=80&fit=crop&crop=face"
+            src={profileImage}
             alt="Profile"
-            className="w-20 h-20 rounded-lg object-cover"
+            className="w-20 h-20 rounded-full object-cover"
           />
-          <button className="absolute -bottom-1 -right-1 bg-gray-600 hover:bg-gray-500 rounded-full p-2 transition-colors">
+          <button
+            type="button"
+            onClick={handleImageClick}
+            className="absolute -bottom-1 -right-1 bg-gray-600 hover:bg-gray-500 rounded-full p-2 transition-colors"
+          >
             <Edit className="w-4 h-4 text-white" />
           </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </div>
       </div>
 
@@ -83,9 +306,11 @@ function SettingsProfile() {
           <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
           <input
             type="email"
+            placeholder="Enter your email"
             value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            // onChange={(e) => handleInputChange('email', e.target.value)}
+            readOnly={true}
+            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 cursor-not-allowed"
           />
         </div>
 
@@ -105,7 +330,7 @@ function SettingsProfile() {
               <option value="au">Australia</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">City</label>
             <select
@@ -137,7 +362,7 @@ function SettingsProfile() {
               <option value="new-south-wales">New South Wales</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Gender</label>
             <select
@@ -169,10 +394,14 @@ function SettingsProfile() {
     </>
   );
 
+  const handleResetPassword = () =>{
+    
+  }
+
   const renderPasswordContent = () => (
     <>
       <h1 className="text-xl font-medium text-white mb-8">Password</h1>
-      
+
       <div className="space-y-6">
         {/* Old Password */}
         <div>
@@ -180,7 +409,7 @@ function SettingsProfile() {
           <div className="relative">
             <input
               type={showOldPassword ? "text" : "password"}
-              placeholder="Enter your old password"
+              placeholder="Input your old password"
               value={passwordData.oldPassword}
               onChange={(e) => handlePasswordChange('oldPassword', e.target.value)}
               className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
@@ -201,7 +430,7 @@ function SettingsProfile() {
           <div className="relative">
             <input
               type={showNewPassword ? "text" : "password"}
-              placeholder="Enter new password"
+              placeholder="Input new password"
               value={passwordData.newPassword}
               onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
               className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
@@ -248,30 +477,27 @@ function SettingsProfile() {
       {/* Sidebar */}
       <div className="w-64 bg-[#282727] h-92 p-4 rounded-lg h-fit">
         <div className="space-y-2">
-          <div 
-            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
-              activeTab === 'Basic' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
-            }`}
+          <div
+            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${activeTab === 'Basic' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
+              }`}
             onClick={() => setActiveTab('Basic')}
           >
             <span className="text-sm font-medium">Basic</span>
             <ChevronRight className="w-4 h-4" />
           </div>
-          
-          <div 
-            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
-              activeTab === 'Change Password' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
-            }`}
+
+          <div
+            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${activeTab === 'Change Password' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
+              }`}
             onClick={() => setActiveTab('Change Password')}
           >
             <span className="text-sm font-medium">Change Password</span>
             <ChevronRight className="w-4 h-4" />
           </div>
-          
-          <div 
-            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
-              activeTab === 'Notifications' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
-            }`}
+
+          <div
+            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${activeTab === 'Notifications' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
+              }`}
             onClick={() => setActiveTab('Notifications')}
           >
             <span className="text-sm font-medium">Notifications</span>
