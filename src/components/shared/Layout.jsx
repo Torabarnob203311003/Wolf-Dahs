@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 function Layout() {
@@ -13,7 +13,7 @@ function Layout() {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}      
-      <aside className="w-64 bg-[#282727] border-r border-t border-[#282727] p-2 flex flex-col fixed top-0 left-0 h-screen z-20">
+      <aside className="w-64 bg-[#1C1C1C] border-r border-t border-[#282727] p-2 flex flex-col fixed top-0 left-0 h-screen z-20">
         <div className="flex items-center justify-center mb-8">
           <img src="/logo.svg" alt="Logo" className="h-16 w-16" />
         </div>
@@ -37,6 +37,26 @@ function Layout() {
           }>
             <CreditCard className="w-5 h-5" />
             Cards Management
+          </NavLink>
+
+          <NavLink to="/spinner-control-panel" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <LoaderPinwheel className="w-5 h-5" />
+            Spinner Control Panel
+          </NavLink>
+          
+          <NavLink to="/spinner-history" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <LoaderPinwheel className="w-5 h-5" />
+            Spinning History 
           </NavLink>
 
           <NavLink to="/users" className={({ isActive }) =>
@@ -89,7 +109,7 @@ function Layout() {
       {/* Main content */}
       <div className="flex-1 flex flex-col ml-64">
         {/* Header */}
-        <header className="bg-[#282727] shadow p-8 flex items-center justify-end pr-10 fixed top-0 left-64 right-0 z-10">
+        <header className="bg-[#1C1C1C] shadow p-8 flex items-center justify-end pr-10 fixed top-0 left-64 right-0 z-10">
           <div className="flex items-center gap-4">
             {/* Bell icon */}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-8 text-[#E28B27]">
@@ -102,7 +122,7 @@ function Layout() {
         </header>
         {/* Page content */}
         <main
-          className="flex-1 p-6 bg-[#000] overflow-auto text-white"
+          className="flex-1 p-6 bg-[#0d0d0d] overflow-auto text-white"
           style={{
             marginTop: '80px',
             height: 'calc(100vh - 80px)',

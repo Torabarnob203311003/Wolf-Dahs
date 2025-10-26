@@ -14,6 +14,8 @@ import AddRaffleCard from "./components/AddRaffles";
 import EditRaffleCard from "./components/EditRaffle";
 import WinnerSelection from "./components/WinnerSelection";
 import WinnerHistory from "./components/WinnerHistory";
+import SpinnerControlPanel from "./components/SpinnerControlPanel";
+import SpinningHistoryPage from "./components/SpinningHistoryPage";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="cards" element={<Cards />} />
           <Route path="add-raffle" element={<AddRaffleCard />} />
+          <Route path="spinner-control-panel" element={<SpinnerControlPanel />} />
+          <Route path="spinner-history" element={<SpinningHistoryPage />} />
           <Route path="edit-raffle/:id" element={<EditRaffleCard />} />
           <Route path="" element={<Organizers />} />
           <Route path="winner" element={<Tournaments />} />
