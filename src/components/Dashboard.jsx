@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Users, Ticket, Package, Trophy, DollarSign } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import axiosSecure from '../lib/axiosSecure';
 
 const MetricCard = ({ title, value, icon: Icon, bgColor, isCompleted = false }) => {
   return (
@@ -27,24 +28,38 @@ const MetricCard = ({ title, value, icon: Icon, bgColor, isCompleted = false }) 
 };
 
 const ChartCard = () => {
-  const [activeTab, setActiveTab] = useState('Monthly');
-  
-  const chartData = [
-    { month: 'Jan', new: 100, old: 150 },
-    { month: 'Feb', new: 200, old: 180 },
-    { month: 'Mar', new: 350, old: 280 },
-    { month: 'Apr', new: 300, old: 250 },
-    { month: 'May', new: 400, old: 320 },
-    { month: 'Jun', new: 380, old: 300 },
-    { month: 'Jul', new: 420, old: 350 },
-    { month: 'Aug', new: 450, old: 380 },
-    { month: 'Sep', new: 380, old: 320 },
-    { month: 'Oct', new: 420, old: 360 },
-    { month: 'Nov', new: 460, old: 400 },
-    { month: 'Dec', new: 500, old: 450 }
-  ];
+  const [activeTab, setActiveTab] = useState("Monthly");
+  const [chartData, setChartData] = useState([]);
+  const [growth, setGrowth] = useState("0%");
+  const tabs = ["Daily", "Weekly", "Monthly", "Yearly"];
 
-  const tabs = ['Daily', 'Weekly', 'Monthly', 'Yearly'];
+  // 🔹 Fetch user growth data
+  const fetchUserGrowth = async (range) => {
+    try {
+      const response = await axiosSecure.get(`/overview/user-growth?range=${range.toLowerCase()}`);
+      const { stats, growthPercentage } = response.data.data;
+      console.log(stats, growthPercentage);
+      
+      // Normalize for Recharts (ensure consistent key names)
+      const formatted = stats.map((item) => ({
+        month: item.period,
+        new: item.new,
+        old: item.old,
+      }));
+
+      setChartData(formatted);
+      setGrowth(growthPercentage);
+    } catch (err) {
+      console.error("❌ Cannot fetch user growth:", err);
+      setChartData([]);
+      setGrowth("0%");
+    }
+  };
+
+  // 🔹 Fetch on mount & tab change
+  useEffect(() => {
+    fetchUserGrowth(activeTab);
+  }, [activeTab]);
 
   return (
     <div className="bg-[#1c1c1c] rounded-lg p-5 shadow-lg">
@@ -54,7 +69,7 @@ const ChartCard = () => {
           <p className="text-gray-500 text-xs">Overview of Latest Month</p>
           <div className="mt-3">
             <span className="text-gray-500 text-xs">User Growth</span>
-            <div className="text-green-400 text-base font-semibold">+15%</div>
+            <div className="text-green-400 text-base font-semibold">+{growth}</div>
           </div>
         </div>
         <div className="flex gap-0.5 bg-[#0f0f0f] rounded-md p-0.5">
@@ -64,8 +79,8 @@ const ChartCard = () => {
               onClick={() => setActiveTab(tab)}
               className={`px-3 py-1 text-xs rounded transition-colors ${
                 activeTab === tab
-                  ? 'bg-[#2a2a2a] text-white'
-                  : 'text-gray-500 hover:text-white'
+                  ? "bg-[#2a2a2a] text-white"
+                  : "text-gray-500 hover:text-white"
               }`}
             >
               {tab}
@@ -73,7 +88,7 @@ const ChartCard = () => {
           ))}
         </div>
       </div>
-      
+
       <div className="flex items-center gap-4 mb-3">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-orange-400"></div>
@@ -87,46 +102,45 @@ const ChartCard = () => {
 
       <div className="h-56 -mx-2">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-            <CartesianGrid 
-              strokeDasharray="3 3" 
-              stroke="#2a2a2a" 
-              vertical={false}
-            />
-            <XAxis 
-              dataKey="month" 
+          <LineChart
+            data={chartData}
+            margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" vertical={false} />
+            <XAxis
+              dataKey="month"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#6b7280', fontSize: 11 }}
+              tick={{ fill: "#6b7280", fontSize: 11 }}
             />
-            <YAxis 
+            <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#6b7280', fontSize: 11 }}
-              domain={[0, 500]}
-              ticks={[0, 100, 200, 300, 400, 500]}
+              tick={{ fill: "#6b7280", fontSize: 11 }}
             />
-            <Line 
-              type="monotone" 
-              dataKey="new" 
-              stroke="#fb923c" 
+            <Line
+              type="monotone"
+              dataKey="new"
+              stroke="#fb923c"
               strokeWidth={2.5}
               dot={false}
             />
-            <Line 
-              type="monotone" 
-              dataKey="old" 
-              stroke="#60a5fa" 
+            <Line
+              type="monotone"
+              dataKey="old"
+              stroke="#60a5fa"
               strokeWidth={2.5}
               dot={false}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
-      
     </div>
   );
 };
+
+
+
 
 const RecentActivityTable = () => {
   const activities = [
@@ -225,22 +239,24 @@ const RecentActivityTable = () => {
 };
 
 function Dashboard() {
+  const [metricData, setMetricData] = useState();
+
   const metrics = [
     {
       title: 'Total User',
-      value: 45586,
+      value: metricData?.totalUsers,
       icon: Users,
       bgColor: 'bg-yellow-500'
     },
     {
       title: 'Total Tickets Sold',
-      value: 5454,
+      value: metricData?.totalTicketSold,
       icon: Ticket,
       bgColor: 'bg-red-500'
     },
     {
       title: 'Available Tickets',
-      value: 26845,
+      value: metricData?.totalAvailableTickets,
       icon: Package,
       bgColor: 'bg-blue-500'
     }
@@ -249,17 +265,30 @@ function Dashboard() {
   const additionalMetrics = [
     {
       title: 'Total Winner',
-      value: 58320,
+      value: metricData?.totalWinner,
       icon: Trophy,
       bgColor: 'bg-yellow-500'
     },
     {
       title: 'Total Earning',
-      value: 152181180,
+      value: metricData?.totalEarnings,
       icon: DollarSign,
       bgColor: 'bg-green-500'
     }
   ];
+
+  const fetchMetrics = async () =>{
+    try {
+      const response = await axiosSecure.get('/overview');
+      setMetricData(response.data.data);
+    }catch(err){
+      console.error("Error fetching metrics:", err);
+    }
+  }
+
+  useEffect(()=>{
+    fetchMetrics();
+  }, []);
 
   return (
     <div className="min-h-screen w-full p-4">

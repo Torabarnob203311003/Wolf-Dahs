@@ -1,9 +1,21 @@
 import { Outlet, NavLink } from 'react-router-dom'
 import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel } from 'lucide-react';
+import { Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useState } from 'react';
 
 function Layout() {
   const {logout} = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [notifications] = useState([
+    { id: 1, title: 'New raffle ticket sold', time: '5 min ago', unread: true },
+    { id: 2, title: 'Jackpot winner announced', time: '1 hour ago', unread: true },
+    { id: 3, title: 'System maintenance scheduled', time: '2 hours ago', unread: false }
+  ]);
+
+  const unreadCount = notifications.filter(n => n.unread).length;
+
 
   const handleLogout = () =>{
     logout();
@@ -109,17 +121,124 @@ function Layout() {
       {/* Main content */}
       <div className="flex-1 flex flex-col ml-64">
         {/* Header */}
-        <header className="bg-[#1C1C1C] shadow p-8 flex items-center justify-end pr-10 fixed top-0 left-64 right-0 z-10">
-          <div className="flex items-center gap-4">
-            {/* Bell icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-8 text-[#E28B27]">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.933 23.933 0 0 1-5.714 0M6.5 10c0-3.038 2.462-5.5 5.5-5.5s5.5 2.462 5.5 5.5c0 2.386.416 4.042 1.09 5.184a.563.563 0 0 1-.49.816H5.9a.563.563 0 0 1-.49-.816C6.084 14.042 6.5 12.386 6.5 10z" />
-            </svg>
-            {/* User profile image */}
-            <img src="/vite.svg" alt="User" className="h-8 w-8 rounded-full border" />
-            <span className="text-white font-semibold">Halid</span>
-          </div>
-        </header>
+        <header className="bg-[#1c1c1c] shadow-lg px-8 py-4 flex items-center justify-between fixed top-0 left-64 right-0 z-50">
+      {/* Left side - can add breadcrumbs or page title here if needed */}
+      <div className="flex-1">
+        {/* Optional: Add breadcrumbs or search bar here */}
+      </div>
+
+      {/* Right side - Notifications & User Profile */}
+      <div className="flex items-center gap-4">
+        {/* Notifications */}
+        <div className="relative">
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="relative p-2 hover:bg-[#2a2a2a] rounded-lg transition-colors"
+          >
+            <Bell className="w-6 h-6 text-orange-500" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notifications Dropdown */}
+          {showNotifications && (
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setShowNotifications(false)}
+              ></div>
+              <div className="absolute right-0 mt-2 w-80 bg-[#1c1c1c] border border-gray-800 rounded-lg shadow-2xl z-20 overflow-hidden">
+                <div className="p-4 border-b border-gray-800">
+                  <h3 className="text-white font-semibold text-sm">Notifications</h3>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`p-4 border-b border-gray-800 hover:bg-[#2a2a2a] transition-colors cursor-pointer ${
+                        notification.unread ? 'bg-[#252525]' : ''
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {notification.unread && (
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-white text-sm">{notification.title}</p>
+                          <p className="text-gray-400 text-xs mt-1">{notification.time}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="p-3 border-t border-gray-800 text-center">
+                  <button className="text-orange-500 hover:text-orange-600 text-xs font-medium">
+                    View all notifications
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-8 bg-gray-700"></div>
+
+        {/* User Profile */}
+        <div className="relative">
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center gap-3 hover:bg-[#2a2a2a] rounded-lg px-3 py-2 transition-colors"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format"
+              alt="User"
+              className="h-9 w-9 rounded-full border-2 border-gray-700 object-cover"
+            />
+            <div className="text-left hidden md:block">
+              <p className="text-white font-semibold text-sm">Halid</p>
+              <p className="text-gray-400 text-xs">Administrator</p>
+            </div>
+            <ChevronDown className="w-4 h-4 text-gray-400" />
+          </button>
+
+          {/* User Menu Dropdown */}
+          {showUserMenu && (
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setShowUserMenu(false)}
+              ></div>
+              <div className="absolute right-0 mt-2 w-56 bg-[#1c1c1c] border border-gray-800 rounded-lg shadow-2xl z-20 overflow-hidden">
+                <div className="p-4 border-b border-gray-800">
+                  <p className="text-white font-semibold text-sm">Halid</p>
+                  <p className="text-gray-400 text-xs">admin@raffle.com</p>
+                </div>
+                <div className="py-2">
+                  <button className="w-full px-4 py-2.5 text-left text-white hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
+                    <User size={16} className="text-gray-400" />
+                    My Profile
+                  </button>
+                  <button className="w-full px-4 py-2.5 text-left text-white hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
+                    <Settings size={16} className="text-gray-400" />
+                    Settings
+                  </button>
+                </div>
+                <div className="border-t border-gray-800">
+                  <button className="w-full px-4 py-2.5 text-left text-red-400 hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
+                    <LogOut size={16} />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
         {/* Page content */}
         <main
           className="flex-1 p-6 bg-[#0d0d0d] overflow-auto text-white"

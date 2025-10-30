@@ -1,8 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle, Save, RotateCcw } from 'lucide-react';
+import axiosSecure from '../lib/axiosSecure';
 
 const SpinnerControlPanel = () => {
-  const [prizes, setPrizes] = useState([
+  const [prizes, setPrizes] = useState([]);
+  const [jackpotSettings, setJackpotSettings] = useState({
+    enabled: true,
+    monthlyLimit: 1,
+    lastHitDate: null,
+  });
+  const [loading, setLoading] = useState(true);
+  const [spinnerId, setSpinnerId] = useState(null); 
+
+  // Load existing spinner data
+  useEffect(() => {
+    const fetchSpinnerData = async () => {
+      try {
+        const res = await axiosSecure.get('/spinner/get-spinner');
+        console.log(res.data.data[0].jackpotSettings);
+        
+        if (res.data && res.data.data[0]._id) {
+          setPrizes(res.data.data[0].prizes || []);
+          console.log(res.data);
+          
+          setJackpotSettings(res.data.data[0].jackpotSettings || {});
+          setSpinnerId(res.data.data[0]._id);
+        } else {
+          setPrizes(defaultPrizes);
+        }
+      } catch (err) {
+        console.error('Error loading spinner data:', err);
+        setPrizes(defaultPrizes);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSpinnerData();
+  }, []);
+
+  const defaultPrizes = [
     { id: 1, label: '0', value: 0, probability: 25, color: '#06b6d4' },
     { id: 2, label: 'ZERO', value: 0, probability: 25, color: '#8b5cf6' },
     { id: 3, label: '$1', value: 1, probability: 20, color: '#fbbf24' },
@@ -10,51 +46,47 @@ const SpinnerControlPanel = () => {
     { id: 5, label: '$5', value: 5, probability: 10, color: '#8b5cf6' },
     { id: 6, label: '$25', value: 25, probability: 4, color: '#06b6d4' },
     { id: 7, label: '$50', value: 50, probability: 0.9, color: '#fbbf24' },
-    { id: 8, label: 'JACKPOT', value: 'jackpot', probability: 0.1, color: '#ef4444' }
-  ]);
-
-  const [jackpotSettings, setJackpotSettings] = useState({
-    enabled: true,
-    monthlyLimit: 1,
-    lastHitDate: null
-  });
+    { id: 8, label: 'JACKPOT', value: 'jackpot', probability: 0.1, color: '#ef4444' },
+  ];
 
   const handlePrizeChange = (id, field, value) => {
-    setPrizes(prizes.map(prize => {
-      if (prize.id === id) {
-        if (field === 'label') {
-          return { ...prize, [field]: value };
-        }
-        return { ...prize, [field]: parseFloat(value) || 0 };
-      }
-      return prize;
-    }));
+    setPrizes((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, [field]: field === 'label' ? value : parseFloat(value) || 0 }
+          : p
+      )
+    );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const totalProbability = prizes.reduce((sum, p) => sum + p.probability, 0);
     if (Math.abs(totalProbability - 100) > 0.1) {
-      alert('Total probability must equal 100%');
+      alert('⚠️ Total probability must equal 100%');
       return;
     }
-    console.log('Saved settings:', { prizes, jackpotSettings });
-    alert('Settings saved successfully!');
-  };
 
-  const handleReset = () => {
-    if (confirm('Reset to default values?')) {
-      setPrizes([
-        { id: 1, label: '0', value: 0, probability: 25, color: '#06b6d4' },
-        { id: 2, label: 'ZERO', value: 0, probability: 25, color: '#8b5cf6' },
-        { id: 3, label: '$1', value: 1, probability: 20, color: '#fbbf24' },
-        { id: 4, label: '$2', value: 2, probability: 15, color: '#ef4444' },
-        { id: 5, label: '$5', value: 5, probability: 10, color: '#8b5cf6' },
-        { id: 6, label: '$25', value: 25, probability: 4, color: '#06b6d4' },
-        { id: 7, label: '$50', value: 50, probability: 0.9, color: '#fbbf24' },
-        { id: 8, label: 'JACKPOT', value: 'jackpot', probability: 0.1, color: '#ef4444' }
-      ]);
+    try {
+      if (spinnerId) {
+        // update existing
+        await axiosSecure.put(`/spinner/update-spinner/${spinnerId}`, { prizes, jackpotSettings });
+      } else {
+        // create new
+        const res = await axiosSecure.post('/spinner/create-spinner', { prizes, jackpotSettings });
+        setSpinnerId(res.data._id);
+      }
+      alert('✅ Settings saved successfully!');
+    } catch (err) {
+      console.error('Error saving spinner settings:', err);
+      alert('❌ Failed to save settings.');
     }
   };
+
+  // const handleReset = () => {
+  //   if (confirm('Reset to default values?')) setPrizes(defaultPrizes);
+  // };
+
+  if (loading) return <div className="text-white p-10">Loading spinner data...</div>;
 
   const totalProbability = prizes.reduce((sum, p) => sum + p.probability, 0);
 
@@ -248,18 +280,10 @@ const SpinnerControlPanel = () => {
             <div className="space-y-3">
               <button
                 onClick={handleSave}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium text-sm"
+                className="w-full bg-[#E28B27] hover:bg-[#e08114] text-white py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium text-sm"
               >
                 <Save size={18} />
                 Save Changes
-              </button>
-              
-              <button
-                onClick={handleReset}
-                className="w-full bg-gray-700 hover:bg-gray-600 text-white py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium text-sm"
-              >
-                <RotateCcw size={18} />
-                Reset to Default
               </button>
             </div>
           </div>
