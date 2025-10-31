@@ -109,7 +109,7 @@ const WinnerSelection = () => {
     const canSelectManualWinner = raffle?.status === true;
 
     return (
-        <div className="min-h-screen bg-black text-white p-3">
+        <div className="min-h-screen text-white p-3">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>

@@ -473,7 +473,7 @@ function SettingsProfile() {
   );
 
   return (
-    <div className="bg-black min-h-screen text-white flex gap-8 p-8">
+    <div className=" min-h-screen text-white flex gap-8 p-8">
       {/* Sidebar */}
       <div className="w-64 bg-[#282727] h-92 p-4 rounded-lg h-fit">
         <div className="space-y-2">

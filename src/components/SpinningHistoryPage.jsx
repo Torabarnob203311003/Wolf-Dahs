@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Filter, Download, Calendar, Trophy, DollarSign, User } from 'lucide-react';
+import axiosSecure from '../lib/axiosSecure';
 
 const SpinningHistoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -7,7 +8,7 @@ const SpinningHistoryPage = () => {
   const [dateRange, setDateRange] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
+  const [overviewStats, setOverviewStats] = useState();;
   // Sample spinning history data
   const spinHistory = [
     {
@@ -140,6 +141,13 @@ const SpinningHistoryPage = () => {
     uniqueUsers: new Set(spinHistory.map(spin => spin.userId)).size
   };
 
+  //  const stats = {
+  //   totalSpins: overviewStats.totalSpins,
+  //   totalWinnings: overviewStats.,
+  //   jackpotWins: overviewStats.totalJackpots,
+  //   uniqueUsers: new Set(spinHistory.map(spin => spin.userId)).size
+  // };
+
   // Filtering
   const filteredHistory = spinHistory.filter(spin => {
     const matchesSearch = spin.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -162,10 +170,20 @@ const SpinningHistoryPage = () => {
     return 'bg-gray-600 text-white';
   };
 
-  const handleExport = () => {
-    console.log('Exporting data...');
-    alert('Export functionality would download CSV/Excel file');
-  };
+  const fetchSpinHistoryOverview = async () =>{
+    try {
+      const response = await axiosSecure.get('/spinner/spinning-history-overview');
+      setOverviewStats(response.data.data);
+      console.log(response.data.data);
+      
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(()=>{
+    fetchSpinHistoryOverview();
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] p-6">
@@ -177,7 +195,7 @@ const SpinningHistoryPage = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <div className="bg-[#1c1c1c] rounded-lg p-4 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
@@ -194,7 +212,7 @@ const SpinningHistoryPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs mb-1">Total Winnings</p>
-                <p className="text-white text-2xl font-bold">${stats.totalWinnings}</p>
+                <p className="text-white text-2xl font-bold">${stats.totalWinning}</p>
               </div>
               <div className="bg-green-500 rounded-lg p-2">
                 <DollarSign className="text-white" size={20} />
@@ -206,22 +224,10 @@ const SpinningHistoryPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs mb-1">Jackpot Wins</p>
-                <p className="text-white text-2xl font-bold">{stats.jackpotWins}</p>
+                <p className="text-white text-2xl font-bold">{stats.totalJackpots}</p>
               </div>
               <div className="bg-yellow-500 rounded-lg p-2">
                 <Trophy className="text-white" size={20} />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#1c1c1c] rounded-lg p-4 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-xs mb-1">Unique Users</p>
-                <p className="text-white text-2xl font-bold">{stats.uniqueUsers}</p>
-              </div>
-              <div className="bg-purple-500 rounded-lg p-2">
-                <User className="text-white" size={20} />
               </div>
             </div>
           </div>
@@ -284,7 +290,7 @@ const SpinningHistoryPage = () => {
                   <th className="text-gray-400 text-left py-3 px-4 font-medium text-xs">PRIZE</th>
                   <th className="text-gray-400 text-left py-3 px-4 font-medium text-xs">VALUE</th>
                   <th className="text-gray-400 text-left py-3 px-4 font-medium text-xs">DATE & TIME</th>
-                  <th className="text-gray-400 text-left py-3 px-4 font-medium text-xs">IP ADDRESS</th>
+                  <th className="text-gray-400 text-left py-3 px-4 font-medium text-xs">Email</th>
                 </tr>
               </thead>
               <tbody>

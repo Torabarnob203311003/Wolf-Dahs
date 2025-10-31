@@ -69,7 +69,7 @@ const ChartCard = () => {
           <p className="text-gray-500 text-xs">Overview of Latest Month</p>
           <div className="mt-3">
             <span className="text-gray-500 text-xs">User Growth</span>
-            <div className="text-green-400 text-base font-semibold">+{growth}</div>
+            <div className="text-green-400 text-base font-semibold">{growth}</div>
           </div>
         </div>
         <div className="flex gap-0.5 bg-[#0f0f0f] rounded-md p-0.5">

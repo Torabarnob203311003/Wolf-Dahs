@@ -58,7 +58,7 @@ const WinnerHistory = () => {
     const currentWinners = filteredWinners.slice(startIndex, endIndex);
 
     return (
-        <div className="min-h-screen bg-black text-white p-6">
+        <div className="min-h-screen text-white p-6">
             {/* Header */}
             <div className="mb-8">
                 <div className="flex items-center gap-2 text-gray-400 mb-2">
