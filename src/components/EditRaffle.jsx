@@ -221,7 +221,7 @@ const EditRaffleCard = ({ onBack = () => { } }) => {
             </div>
 
             {/* Form Container */}
-            <div className="bg-[#282727] rounded-lg p-8">
+            <div className="bg-[#1C1C1C] rounded-lg p-8">
                 <h1 className="text-2xl font-bold mb-8">Edit Card</h1>
 
                 {/* Error Message */}
