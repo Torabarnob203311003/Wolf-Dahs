@@ -1,26 +1,60 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { ChevronRight, Edit, Eye, EyeOff } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
-import placeholderImage from "/placeholder.jpg"
+import placeholderImage from "/placeholder.jpg";
 
 function SettingsProfile() {
   const [activeTab, setActiveTab] = useState('Basic');
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [profileImage, setProfileImage] = useState(placeholderImage);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  
+  const userId = "69067024c74cb38ba37c65cf";
+
+  return (
+    <div className="min-h-screen text-white flex gap-8 p-8">
+      {/* Sidebar */}
+      <div className="w-64 bg-[#282727] p-4 rounded-lg h-fit">
+        <div className="space-y-2">
+          {[
+            { id: 'Basic', label: 'Basic' },
+            { id: 'Change Password', label: 'Change Password' },
+            { id: 'createAdmin', label: 'Create Admin' },
+            { id: 'Notifications', label: 'Notifications' }
+          ].map((tab) => (
+            <div
+              key={tab.id}
+              className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${
+                activeTab === tab.id ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span className="text-sm font-medium">{tab.label}</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 bg-[#282727] p-8 rounded-lg">
+        <div className="max-w-2xl">
+          {activeTab === 'Basic' && <BasicProfileSection userId={userId} />}
+          {activeTab === 'Change Password' && <ChangePasswordSection userId={userId} />}
+          {activeTab === 'createAdmin' && <CreateAdminSection />}
+          {activeTab === 'Notifications' && <NotificationsSection />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Basic Profile Section Component
+function BasicProfileSection({ userId }) {
+  const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [profileImage, setProfileImage] = useState(placeholderImage);
+  const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
-
-  // password reset states
-  const [oldPass, setOldPass] = useState('');
-  const [newPass, setNewPass] = useState('');
-  const [confirmPass, setConfirmPass] = useState('');
-
-  const userId = "68f68aef0ad7e0cb33639559";
 
   const [formData, setFormData] = useState({
     displayName: '',
@@ -30,12 +64,6 @@ function SettingsProfile() {
     province: '',
     gender: '',
     bio: '',
-  });
-
-  const [passwordData, setPasswordData] = useState({
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
   });
 
   // Fetch user data on component mount
@@ -52,7 +80,6 @@ function SettingsProfile() {
         const user = response.data.data;
         setUserData(user);
         
-        // Populate form with existing data
         setFormData({
           displayName: user.userName || '',
           email: user.email || '',
@@ -63,16 +90,12 @@ function SettingsProfile() {
           bio: user.bio || '',
         });
 
-        // Set profile image if exists
         if (user.photoUrl) {
           setProfileImage(user.photoUrl);
         }
-        console.log(user);
-        
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      // Don't show error alert on initial load
     } finally {
       setLoading(false);
     }
@@ -85,13 +108,6 @@ function SettingsProfile() {
     }));
   };
 
-  const handlePasswordChange = (field, value) => {
-    setPasswordData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
@@ -99,22 +115,18 @@ function SettingsProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
 
-      // Validate file size (max 20MB)
       if (file.size > 20 * 1024 * 1024) {
         alert('Image size should be less than 20MB');
         return;
       }
 
-      // Store the file for upload
       setSelectedFile(file);
 
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileImage(reader.result);
@@ -123,141 +135,92 @@ function SettingsProfile() {
     }
   };
 
-  const handleSave = async () => {
-    if (activeTab === 'Basic') {
-      try {
-        setLoading(true);
+  const handleSaveProfile = async () => {
+    try {
+      setLoading(true);
 
-        // Create FormData for multipart/form-data
-        const formDataToSend = new FormData();
-        
-        // Append profile data (only if changed)
-        if (formData.displayName && formData.displayName !== userData?.userName) {
-          formDataToSend.append('userName', formData.displayName);
-        }
-        if (formData.email && formData.email !== userData?.email) {
-          formDataToSend.append('email', formData.email);
-        }
-        if (formData.country) {
-          formDataToSend.append('country', formData.country);
-        }
-        if (formData.city) {
-          formDataToSend.append('city', formData.city);
-        }
-        if (formData.province) {
-          formDataToSend.append('province', formData.province);
-        }
-        if (formData.gender) {
-          formDataToSend.append('gender', formData.gender);
-        }
-        if (formData.bio) {
-          formDataToSend.append('bio', formData.bio);
-        }
-        
-        // Append image file if selected
-        if (selectedFile) {
-          formDataToSend.append('photo', selectedFile);
-        }
-
-        // Check if there's anything to update
-        let hasChanges = false;
-        for (let _ of formDataToSend.entries()) {
-          hasChanges = true;
-          break;
-        }
-
-        if (!hasChanges) {
-          alert('No changes to save');
-          setLoading(false);
-          return;
-        }
-
-        const response = await axiosSecure.patch(
-          `/users/update-profile?id=${userId}`, 
-          formDataToSend,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        );
-
-        if (response.data.success) {
-          alert('Profile updated successfully!');
-          
-          // Update local user data
-          setUserData(response.data.data);
-          
-          // Clear selected file
-          setSelectedFile(null);
-          
-          // Optionally refresh the page or update auth context
-          // window.location.reload();
-        }
-      } catch (error) {
-        console.error('Error updating profile:', error);
-        const errorMessage = error.response?.data?.message || 
-                            error.response?.data?.errorSources?.[0]?.message ||
-                            'Failed to update profile. Please try again.';
-        alert(errorMessage);
-      } finally {
-        setLoading(false);
+      // Create FormData for multipart/form-data
+      const formDataToSend = new FormData();
+      
+      // Append profile data
+      if (formData.displayName && formData.displayName !== userData?.userName) {
+        formDataToSend.append('userName', formData.displayName);
       }
-    } else if (activeTab === 'Change Password') {
-      try {
-        setLoading(true);
-
-        // Validate passwords
-        if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-          alert('Please fill in all password fields');
-          setLoading(false);
-          return;
-        }
-
-        if (passwordData.newPassword !== passwordData.confirmPassword) {
-          alert('New password and confirmation do not match');
-          setLoading(false);
-          return;
-        }
-
-        if (passwordData.newPassword.length < 6) {
-          alert('New password must be at least 6 characters long');
-          setLoading(false);
-          return;
-        }
-
-        const response = await axiosSecure.patch(
-          `/users/change-password?id=${userId}`,
-          {
-            oldPassword: passwordData.oldPassword,
-            newPassword: passwordData.newPassword,
-            confirmPassword: passwordData.confirmPassword
-          }
-        );
-
-        if (response.data.success) {
-          alert('Password changed successfully!');
-          
-          // Clear password fields
-          setPasswordData({
-            oldPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-          });
-        }
-      } catch (error) {
-        console.error('Error changing password:', error);
-        const errorMessage = error.response?.data?.message || 
-                            error.response?.data?.errorSources?.[0]?.message ||
-                            'Failed to change password. Please try again.';
-        alert(errorMessage);
-      } finally {
-        setLoading(false);
+      if (formData.email && formData.email !== userData?.email) {
+        formDataToSend.append('email', formData.email);
       }
+      if (formData.country) {
+        formDataToSend.append('country', formData.country);
+      }
+      if (formData.city) {
+        formDataToSend.append('city', formData.city);
+      }
+      if (formData.province) {
+        formDataToSend.append('province', formData.province);
+      }
+      if (formData.gender) {
+        formDataToSend.append('gender', formData.gender);
+      }
+      if (formData.bio) {
+        formDataToSend.append('bio', formData.bio);
+      }
+      
+      // Append image file if selected
+      if (selectedFile) {
+        formDataToSend.append('photo', selectedFile);
+      }
+
+      // Check if there's anything to update
+      let hasChanges = false;
+      for (let _ of formDataToSend.entries()) {
+        hasChanges = true;
+        break;
+      }
+
+      if (!hasChanges) {
+        alert('No changes to save');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Saving profile data:', {
+        displayName: formData.displayName,
+        email: formData.email,
+        country: formData.country,
+        city: formData.city,
+        province: formData.province,
+        gender: formData.gender,
+        bio: formData.bio,
+        hasImage: !!selectedFile
+      });
+
+      const response = await axiosSecure.patch(
+        `/users/update-profile?id=${userId}`, 
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        alert('Profile updated successfully!');
+        setUserData(response.data.data);
+        setSelectedFile(null);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.errorSources?.[0]?.message ||
+                          'Failed to update profile. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const renderBasicContent = () => (
+  return (
     <>
       <h1 className="text-xl font-medium text-white mb-8">Profile Information</h1>
 
@@ -308,7 +271,6 @@ function SettingsProfile() {
             type="email"
             placeholder="Enter your email"
             value={formData.email}
-            // onChange={(e) => handleInputChange('email', e.target.value)}
             readOnly={true}
             className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 cursor-not-allowed"
           />
@@ -391,14 +353,99 @@ function SettingsProfile() {
           />
         </div>
       </div>
+
+      {/* Save Button */}
+      <div className="mt-8">
+        <button
+          onClick={handleSaveProfile}
+          disabled={loading}
+          className="bg-[#E28B27] hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Saving...' : 'Save Profile'}
+        </button>
+      </div>
     </>
   );
+}
 
-  const handleResetPassword = () =>{
-    
-  }
+// Change Password Section Component
+function ChangePasswordSection({ userId }) {
+  const [loading, setLoading] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const renderPasswordContent = () => (
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const handlePasswordChange = (field, value) => {
+    setPasswordData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      setLoading(true);
+
+      // Validate passwords
+      if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+        alert('Please fill in all password fields');
+        setLoading(false);
+        return;
+      }
+
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        alert('New password and confirmation do not match');
+        setLoading(false);
+        return;
+      }
+
+      if (passwordData.newPassword.length < 6) {
+        alert('New password must be at least 6 characters long');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Changing password with data:', {
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword,
+        confirmPassword: passwordData.confirmPassword
+      });
+
+      const response = await axiosSecure.patch(
+        `/users/change-password?id=${userId}`,
+        {
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+          confirmPassword: passwordData.confirmPassword
+        }
+      );
+
+      if (response.data.success) {
+        alert('Password changed successfully!');
+        setPasswordData({
+          oldPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.errorSources?.[0]?.message ||
+                          'Failed to change password. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
     <>
       <h1 className="text-xl font-medium text-white mb-8">Password</h1>
 
@@ -469,67 +516,288 @@ function SettingsProfile() {
           </div>
         </div>
       </div>
+
+      {/* Change Password Button */}
+      <div className="mt-8">
+        <button
+          onClick={handleChangePassword}
+          disabled={loading}
+          className="bg-[#E28B27] hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Changing Password...' : 'Change Password'}
+        </button>
+      </div>
     </>
   );
+}
+
+// Create Admin Section Component
+function CreateAdminSection() {
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [adminData, setAdminData] = useState({
+    adminName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const handleAdminChange = (field, value) => {
+    setAdminData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCreateAdmin = async () => {
+  try {
+    setLoading(true);
+
+    // Validation
+    if (!adminData.adminName || !adminData.email || !adminData.password || !adminData.confirmPassword) {
+      alert('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    if (adminData.password !== adminData.confirmPassword) {
+      alert('Password and confirmation do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (adminData.password.length < 8) {
+      alert('Password must be at least 8 characters long');
+      setLoading(false);
+      return;
+    }
+
+    console.log('Creating admin with data:', {
+      userName: adminData.adminName, // Make sure this matches backend expectation
+      email: adminData.email,
+      password: adminData.password,
+    });
+
+    // API Call - Use the exact field names your backend expects
+    const response = await axiosSecure.post('/users/create-admin', {
+      userName: adminData.adminName, // Changed from username to userName
+      email: adminData.email,
+      password: adminData.password,
+      role: adminData.role
+    });
+
+    if (response.data.success) {
+      alert('Admin created successfully!');
+      // Reset form
+      setAdminData({
+        adminName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        role: ''
+      });
+    }
+  } catch (error) {
+    console.error('Error creating admin:', error);
+    const errorMessage = error.response?.data?.message || 
+                        error.response?.data?.errorSources?.[0]?.message ||
+                        'Failed to create admin. Please try again.';
+    alert(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <div className=" min-h-screen text-white flex gap-8 p-8">
-      {/* Sidebar */}
-      <div className="w-64 bg-[#282727] h-92 p-4 rounded-lg h-fit">
-        <div className="space-y-2">
-          <div
-            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${activeTab === 'Basic' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
-              }`}
-            onClick={() => setActiveTab('Basic')}
-          >
-            <span className="text-sm font-medium">Basic</span>
-            <ChevronRight className="w-4 h-4" />
-          </div>
+    <>
+      <h1 className="text-xl font-medium text-white mb-8">Create Admin</h1>
 
-          <div
-            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${activeTab === 'Change Password' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
-              }`}
-            onClick={() => setActiveTab('Change Password')}
-          >
-            <span className="text-sm font-medium">Change Password</span>
-            <ChevronRight className="w-4 h-4" />
-          </div>
-
-          <div
-            className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${activeTab === 'Notifications' ? 'bg-[#E28B27] text-white' : 'bg-[#121212] hover:bg-gray-600'
-              }`}
-            onClick={() => setActiveTab('Notifications')}
-          >
-            <span className="text-sm font-medium">Notifications</span>
-            <ChevronRight className="w-4 h-4" />
-          </div>
+      <div className="space-y-6">
+        {/* Admin Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Admin Name</label>
+          <input
+            type="text"
+            placeholder="Enter Admin Name"
+            value={adminData.adminName}
+            onChange={(e) => handleAdminChange('adminName', e.target.value)}
+            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+          />
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 bg-[#282727] p-8 rounded-lg">
-        <div className="max-w-2xl">
-          {activeTab === 'Basic' && renderBasicContent()}
-          {activeTab === 'Change Password' && renderPasswordContent()}
-          {activeTab === 'Notifications' && (
-            <>
-              <h1 className="text-xl font-medium text-white mb-8">Notifications</h1>
-              <p className="text-gray-400">Notification settings will be displayed here.</p>
-            </>
-          )}
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+          <input
+            type="email"
+            placeholder="Enter admin email"
+            value={adminData.email}
+            onChange={(e) => handleAdminChange('email', e.target.value)}
+            className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+          />
+        </div>
 
-          {/* Save Button */}
-          <div className="mt-8">
+        {/* Password */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Create password"
+              value={adminData.password}
+              onChange={(e) => handleAdminChange('password', e.target.value)}
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            />
             <button
-              onClick={handleSave}
-              className="bg-[#E28B27] hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
             >
-              Save
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+          <p className="text-xs text-gray-400 mt-1">
+            Password should be at least 8 characters with letters and numbers
+          </p>
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm password"
+              value={adminData.confirmPassword}
+              onChange={(e) => handleAdminChange('confirmPassword', e.target.value)}
+              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+            >
+              {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Create Admin Button */}
+      <div className="mt-8">
+        <button
+          onClick={handleCreateAdmin}
+          disabled={loading}
+          className="bg-[#E28B27] hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Creating Admin...' : 'Create Admin'}
+        </button>
+      </div>
+    </>
+  );
+}
+
+// Notifications Section Component
+function NotificationsSection() {
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    pushNotifications: true,
+    raffleUpdates: true,
+    prizeAlerts: true,
+    newsletter: false
+  });
+
+  const handleNotificationChange = (setting, value) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  const handleSaveNotifications = async () => {
+    try {
+      console.log('Saving notification settings:', notificationSettings);
+      
+      // API Call - Replace with your actual endpoint
+      const response = await axiosSecure.patch('/users/update-notifications', {
+        notifications: notificationSettings
+      });
+
+      if (response.data.success) {
+        alert('Notification settings updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error updating notifications:', error);
+      alert('Failed to update notification settings');
+    }
+  };
+
+  return (
+    <>
+      <h1 className="text-xl font-medium text-white mb-8">Notifications</h1>
+      
+      <div className="space-y-6">
+        <div className="flex items-center justify-between p-4 bg-[#121212] rounded-lg">
+          <div>
+            <h3 className="text-white font-medium">Email Notifications</h3>
+            <p className="text-gray-400 text-sm">Receive updates via email</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input 
+              type="checkbox" 
+              checked={notificationSettings.emailNotifications}
+              onChange={(e) => handleNotificationChange('emailNotifications', e.target.checked)}
+              className="sr-only peer" 
+            />
+            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-[#121212] rounded-lg">
+          <div>
+            <h3 className="text-white font-medium">Push Notifications</h3>
+            <p className="text-gray-400 text-sm">Receive browser notifications</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input 
+              type="checkbox" 
+              checked={notificationSettings.pushNotifications}
+              onChange={(e) => handleNotificationChange('pushNotifications', e.target.checked)}
+              className="sr-only peer" 
+            />
+            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-[#121212] rounded-lg">
+          <div>
+            <h3 className="text-white font-medium">Raffle Updates</h3>
+            <p className="text-gray-400 text-sm">Get notified about new raffles</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input 
+              type="checkbox" 
+              checked={notificationSettings.raffleUpdates}
+              onChange={(e) => handleNotificationChange('raffleUpdates', e.target.checked)}
+              className="sr-only peer" 
+            />
+            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+          </label>
+        </div>
+      </div>
+
+      {/* Save Notifications Button */}
+      <div className="mt-8">
+        <button
+          onClick={handleSaveNotifications}
+          className="bg-[#E28B27] hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+        >
+          Save Notification Settings
+        </button>
+      </div>
+    </>
   );
 }
 
