@@ -2,14 +2,32 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronRight, Edit, Eye, EyeOff } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 import placeholderImage from "/placeholder.jpg";
+import { useAuth } from '../context/AuthContext';
+import { ScaleLoader } from "react-spinners";
 
 function SettingsProfile() {
   const [activeTab, setActiveTab] = useState('Basic');
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  const {user, loading} = useAuth();
   
-  const userId = "69067024c74cb38ba37c65cf";
 
+  if(loading){
+    return <>
+      <div className="p-12 flex flex-col items-center justify-center">
+        <ScaleLoader
+          color='#facc15'
+          loading={loading}
+          cssOverride={{ display: "block", margin: "0 auto" }}
+          size={150}
+          aria-label="Loading Spinner"
+        />
+        <p className="text-gray-400 text-sm mt-4">Loading user...</p>
+      </div>
+    </>
+  }
+  
+  
   return (
     <div className="min-h-screen text-white flex gap-8 p-8">
       {/* Sidebar */}
@@ -38,8 +56,8 @@ function SettingsProfile() {
       {/* Main Content */}
       <div className="flex-1 bg-[#282727] p-8 rounded-lg">
         <div className="max-w-2xl">
-          {activeTab === 'Basic' && <BasicProfileSection userId={userId} />}
-          {activeTab === 'Change Password' && <ChangePasswordSection userId={userId} />}
+          {activeTab === 'Basic' && <BasicProfileSection userId={user._id} />}
+          {activeTab === 'Change Password' && <ChangePasswordSection userId={user._id} />}
           {activeTab === 'createAdmin' && <CreateAdminSection />}
           {activeTab === 'Notifications' && <NotificationsSection />}
         </div>
@@ -802,3 +820,4 @@ function NotificationsSection() {
 }
 
 export default SettingsProfile;
+
