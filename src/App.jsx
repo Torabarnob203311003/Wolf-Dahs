@@ -16,31 +16,66 @@ import WinnerSelection from "./components/WinnerSelection";
 import WinnerHistory from "./components/WinnerHistory";
 import SpinnerControlPanel from "./components/SpinnerControlPanel";
 import SpinningHistoryPage from "./components/SpinningHistoryPage";
+import PrivateRoute from "./PrivateRoute/PrivateRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Routes outside layout */}
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
 
-        {/* Routes with layout */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="cards" element={<Cards />} />
-          <Route path="add-raffle" element={<AddRaffleCard />} />
-          <Route path="spinner-control-panel" element={<SpinnerControlPanel />} />
-          <Route path="spinner-history" element={<SpinningHistoryPage />} />
-          <Route path="edit-raffle/:id" element={<EditRaffleCard />} />
-          <Route path="" element={<Organizers />} />
-          <Route path="winner" element={<Tournaments />} />
-          <Route path="winner-selection" element={<WinnerSelection />} />
-          <Route path="winner-history" element={<WinnerHistory />} />
-          <Route path="users" element={<UserManagement />} />
-          <Route path="payments" element={<Winner />} />
-          <Route path="insights" element={<Insights />} />
-          <Route path="settings" element={<Settings />} />
+        {/* Protected dashboard routes */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="cards" element={<Cards />} />
+            <Route path="add-raffle" element={<AddRaffleCard />} />
+            <Route path="spinner-control-panel" element={<SpinnerControlPanel />} />
+            <Route path="spinner-history" element={<SpinningHistoryPage />} />
+            <Route path="edit-raffle/:id" element={<EditRaffleCard />} />
+            <Route path="organizers" element={<Organizers />} />
+            <Route path="winner" element={<Tournaments />} />
+            <Route path="winner-selection" element={<WinnerSelection />} />
+            <Route path="winner-history" element={<WinnerHistory />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="payments" element={<Winner />} />
+            <Route path="insights" element={<Insights />} />
+            <Route path="settings" element={<Settings />} />
+
+
+            <Route path="*" element={
+              <div className="flex items-center justify-center min-h-screen bg-black text-white">
+                <div className="text-center">
+                  <h1 className="text-6xl font-bold mb-4">404</h1>
+                  <p className="text-xl mb-6">Oops! Page not found.</p>
+                  <a
+                    href="/"
+                    className="px-6 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-600 transition"
+                  >
+                    Go Home
+                  </a>
+                </div>
+              </div>
+            } />
+
+          </Route>
+
+            <Route path="*" element={
+              <div className="flex items-center justify-center min-h-screen bg-black text-white">
+                <div className="text-center">
+                  <h1 className="text-6xl font-bold mb-4">404</h1>
+                  <p className="text-xl mb-6">Oops! Page not found.</p>
+                  <a
+                    href="/"
+                    className="px-6 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-600 transition"
+                  >
+                    Go Home
+                  </a>
+                </div>
+              </div>
+            } />
         </Route>
       </Routes>
     </Router>

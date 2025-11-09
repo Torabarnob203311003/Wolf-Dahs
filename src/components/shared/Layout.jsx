@@ -2,25 +2,46 @@ import { Outlet, NavLink } from 'react-router-dom'
 import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel } from 'lucide-react';
 import { Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axiosSecure from '../../lib/axiosSecure';
 
 function Layout() {
-  const {logout} = useAuth();
+  const {user, loading,logout} = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [notifications] = useState([
-    { id: 1, title: 'New raffle ticket sold', time: '5 min ago', unread: true },
-    { id: 2, title: 'Jackpot winner announced', time: '1 hour ago', unread: true },
-    { id: 3, title: 'System maintenance scheduled', time: '2 hours ago', unread: false }
-  ]);
-
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const [notifications, setNotifications] = useState([]);
+  const token = localStorage.getItem('token');
+  const unreadCount = notifications.length;
 
 
   const handleLogout = () =>{
     logout();
     window.location = '/login';
   }
+
+  const fetchNotifications = async () =>{
+    const {data } = await axiosSecure.get('/notifications', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    setNotifications(data.data);
+  };
+  
+  const clearNotifications = async () =>{
+    const {data } = await axiosSecure.delete('/notifications/cleanup', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    console.log(data);
+    setNotifications([]);
+  }
+  console.log(user);
+  
+  useEffect(()=>{
+    fetchNotifications();
+  }, []);
 
   return (
     <div className="flex min-h-screen">
@@ -111,10 +132,10 @@ function Layout() {
             Settings
           </NavLink>
 
-         <div onClick={handleLogout} className='flex items-center gap-2 px-4 mr-3 text-white font-semibold hover:bg-[#E28B27] cursor-pointer py-3 rounded-lg'>
+         {/* <div onClick={handleLogout} className='flex items-center gap-2 px-4 mr-3 text-white font-semibold hover:bg-[#E28B27] cursor-pointer py-3 rounded-lg'>
             <Power className="w-5 h-5 mr-1" />
             Sign Out
-          </div>
+          </div> */}
         </nav>
       </aside>
 
@@ -151,34 +172,40 @@ function Layout() {
                 onClick={() => setShowNotifications(false)}
               ></div>
               <div className="absolute right-0 mt-2 w-80 bg-[#1c1c1c] border border-gray-800 rounded-lg shadow-2xl z-20 overflow-hidden">
-                <div className="p-4 border-b border-gray-800">
-                  <h3 className="text-white font-semibold text-sm">Notifications</h3>
+                
+                <div className='p-4 border-b border-gray-800 flex items-center justify-between'>
+                  <div>
+                    <h3 className="text-white font-semibold text-sm">Notifications</h3>
+                  </div>
+
+                  <div>
+                    <p onClick={clearNotifications} className='text-orange-500 hover:underline cursor-pointer'>Clear all</p>
+                  </div>
                 </div>
+                
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.map((notification) => (
                     <div
-                      key={notification.id}
-                      className={`p-4 border-b border-gray-800 hover:bg-[#2a2a2a] transition-colors cursor-pointer ${
-                        notification.unread ? 'bg-[#252525]' : ''
-                      }`}
+                      key={notification._id}
+                      className={`p-4 border-b border-gray-800 hover:bg-[#2a2a2a] transition-colors cursor-pointer`}
                     >
                       <div className="flex items-start gap-3">
                         {notification.unread && (
                           <div className="w-2 h-2 bg-orange-500 rounded-full mt-1.5 flex-shrink-0"></div>
                         )}
                         <div className="flex-1">
-                          <p className="text-white text-sm">{notification.title}</p>
+                          <p className="text-white text-sm">{notification.message}</p>
                           <p className="text-gray-400 text-xs mt-1">{notification.time}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="p-3 border-t border-gray-800 text-center">
+                {/* <div className="p-3 border-t border-gray-800 text-center">
                   <button className="text-orange-500 hover:text-orange-600 text-xs font-medium">
                     View all notifications
                   </button>
-                </div>
+                </div> */}
               </div>
             </>
           )}
@@ -193,13 +220,13 @@ function Layout() {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center gap-3 hover:bg-[#2a2a2a] rounded-lg px-3 py-2 transition-colors"
           >
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format"
-              alt="User"
-              className="h-9 w-9 rounded-full border-2 border-gray-700 object-cover"
-            />
+            <div
+              className="h-9 w-9 rounded-full border-2 border-gray-700 bg-gradient-to-tr from-[#E28B27] via-[#F5A623] to-[#FFD580] flex items-center justify-center text-white font-semibold"
+            >
+              {user?.userName?.[0]?.toUpperCase() || 'U'}
+            </div>
             <div className="text-left hidden md:block">
-              <p className="text-white font-semibold text-sm">Halid</p>
+              <p className="text-white font-semibold text-sm">{user?.userName}</p>
               <p className="text-gray-400 text-xs">Administrator</p>
             </div>
             <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -214,20 +241,20 @@ function Layout() {
               ></div>
               <div className="absolute right-0 mt-2 w-56 bg-[#1c1c1c] border border-gray-800 rounded-lg shadow-2xl z-20 overflow-hidden">
                 <div className="p-4 border-b border-gray-800">
-                  <p className="text-white font-semibold text-sm">Halid</p>
-                  <p className="text-gray-400 text-xs">admin@raffle.com</p>
+                  <p className="text-white font-semibold text-sm">{user?.userName}</p>
+                  <p className="text-gray-400 text-xs">{user.email}</p>
                 </div>
                 <div className="py-2">
-                  <button className="w-full px-4 py-2.5 text-left text-white hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
+                  {/* <button className="w-full px-4 py-2.5 text-left text-white hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
                     <User size={16} className="text-gray-400" />
                     My Profile
-                  </button>
-                  <button className="w-full px-4 py-2.5 text-left text-white hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
+                  </button> */}
+                  <button onClick={()=> (window.location.href = '/settings')} className="w-full px-4 py-2.5 text-left text-white hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
                     <Settings size={16} className="text-gray-400" />
                     Settings
                   </button>
                 </div>
-                <div className="border-t border-gray-800">
+                <div onClick={handleLogout} className="border-t border-gray-800">
                   <button className="w-full px-4 py-2.5 text-left text-red-400 hover:bg-[#2a2a2a] transition-colors flex items-center gap-3 text-sm">
                     <LogOut size={16} />
                     Sign Out

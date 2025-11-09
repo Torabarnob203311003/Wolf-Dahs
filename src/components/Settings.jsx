@@ -8,7 +8,7 @@ import { ScaleLoader } from "react-spinners";
 function SettingsProfile() {
   const [activeTab, setActiveTab] = useState('Basic');
   // const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
+  // const [userData, setUserData] = useState(null);
   const {user, loading} = useAuth();
   
 
@@ -37,7 +37,7 @@ function SettingsProfile() {
             { id: 'Basic', label: 'Basic' },
             { id: 'Change Password', label: 'Change Password' },
             { id: 'createAdmin', label: 'Create Admin' },
-            { id: 'Notifications', label: 'Notifications' }
+            // { id: 'Notifications', label: 'Notifications' }
           ].map((tab) => (
             <div
               key={tab.id}
@@ -59,7 +59,7 @@ function SettingsProfile() {
           {activeTab === 'Basic' && <BasicProfileSection userId={user._id} />}
           {activeTab === 'Change Password' && <ChangePasswordSection userId={user._id} />}
           {activeTab === 'createAdmin' && <CreateAdminSection />}
-          {activeTab === 'Notifications' && <NotificationsSection />}
+          {/* {activeTab === 'Notifications' && <NotificationsSection />} */}
         </div>
       </div>
     </div>
@@ -387,12 +387,12 @@ function BasicProfileSection({ userId }) {
 }
 
 // Change Password Section Component
-function ChangePasswordSection({ userId }) {
+function ChangePasswordSection() {
   const [loading, setLoading] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const token = localStorage.getItem('token')
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: '',
@@ -435,12 +435,16 @@ function ChangePasswordSection({ userId }) {
         confirmPassword: passwordData.confirmPassword
       });
 
-      const response = await axiosSecure.patch(
-        `/users/change-password?id=${userId}`,
+      const response = await axiosSecure.post(
+        `/users/change-password`,
         {
           oldPassword: passwordData.oldPassword,
           newPassword: passwordData.newPassword,
-          confirmPassword: passwordData.confirmPassword
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
         }
       );
 
