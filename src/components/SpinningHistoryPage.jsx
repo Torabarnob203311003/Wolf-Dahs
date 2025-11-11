@@ -28,7 +28,7 @@ const SpinningHistoryPage = () => {
       });
 
       const resData = response.data.data;
-
+      
       const spins = resData.data.map((spin) => ({
         ...spin,
         prize: spin.reward,
