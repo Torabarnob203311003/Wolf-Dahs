@@ -17,6 +17,7 @@ import WinnerHistory from "./components/WinnerHistory";
 import SpinnerControlPanel from "./components/SpinnerControlPanel";
 import SpinningHistoryPage from "./components/SpinningHistoryPage";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
+import WithdrawlRequest from './components/WithdrawlRequest';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="payments" element={<Winner />} />
             <Route path="insights" element={<Insights />} />
             <Route path="settings" element={<Settings />} />
+           <Route path="withdraw-request" element={<WithdrawlRequest />} />
 
 
             <Route path="*" element={

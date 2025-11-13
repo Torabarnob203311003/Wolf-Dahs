@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel, BanknoteArrowUp } from 'lucide-react';
 import { Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
@@ -70,6 +70,16 @@ function Layout() {
           }>
             <CreditCard className="w-5 h-5" />
             Cards Management
+          </NavLink>
+
+           <NavLink to="/withdraw-request" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <BanknoteArrowUp className="w-5 h-5" />
+            Withdrawal Request
           </NavLink>
 
           <NavLink to="/spinner-control-panel" className={({ isActive }) =>
