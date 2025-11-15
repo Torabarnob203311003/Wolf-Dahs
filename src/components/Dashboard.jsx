@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, Ticket, Package, Trophy, DollarSign } from 'lucide-react';
+import { Users, Ticket, Package, Trophy, DollarSign, Loader2, Activity, TrendingUp, Zap, Clock  } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import axiosSecure from '../lib/axiosSecure';
 
@@ -142,98 +142,228 @@ const ChartCard = () => {
 
 
 
-const RecentActivityTable = () => {
-  const activities = [
-    {
-      id: 1,
-      name: "Savannah Nguyen",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616c927aba5?w=32&h=32&fit=crop&crop=face&auto=format",
-      ticketId: "#000095",
-      purchaseDate: "10am - 10/04/2025",
-      amount: "$23"
-    },
-    {
-      id: 2,
-      name: "Annette Black",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=32&h=32&fit=crop&crop=face&auto=format",
-      ticketId: "#087423",
-      purchaseDate: "5:00pm - 20/05/2025",
-      amount: "$13"
-    },
-    {
-      id: 3,
-      name: "Cody Fisher",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face&auto=format",
-      ticketId: "#006468",
-      purchaseDate: "4:00pm - 05/04/2025",
-      amount: "$10"
-    },
-    {
-      id: 4,
-      name: "Brooklyn Simmons",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face&auto=format",
-      ticketId: "#006684",
-      purchaseDate: "3:00pm - 17/04/2025",
-      amount: "$23"
-    },
-    {
-      id: 5,
-      name: "Ralph Edwards",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format",
-      ticketId: "#006548",
-      purchaseDate: "10:05pm - 08/08/2025",
-      amount: "$23"
+
+const RecentActivityFeed = () => {
+  const [activitiesData, setActivitiesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('token');
+
+  // Get icon, color and extracted info based on activity title/message
+  const getActivityConfig = (title, message) => {
+    const lowerTitle = title.toLowerCase();
+    const lowerMessage = message.toLowerCase();
+    
+    // Extract user name from message
+    const userNameMatch = message.match(/^(.+?)\s+has/);
+    const userName = userNameMatch ? userNameMatch[1] : 'User';
+    
+    // Extract amount if present
+    const amountMatch = message.match(/(\d+)\s+credit/);
+    const amount = amountMatch ? amountMatch[1] : null;
+    
+    if (lowerTitle.includes('top up') || lowerMessage.includes('top up')) {
+      return {
+        icon: <Zap size={20} />,
+        color: 'from-purple-500 to-pink-500',
+        bgColor: 'bg-purple-500/10',
+        borderColor: 'border-purple-500/30',
+        text: 'Topped up credits',
+        category: 'Top Up',
+        userName,
+        amount
+      };
+    } else if (lowerTitle.includes('ticket') || lowerMessage.includes('ticket')) {
+      return {
+        icon: <Ticket size={20} />,
+        color: 'from-blue-500 to-cyan-500',
+        bgColor: 'bg-blue-500/10',
+        borderColor: 'border-blue-500/30',
+        text: 'Purchased tickets',
+        category: 'Ticket',
+        userName,
+        amount
+      };
+    } else if (lowerTitle.includes('spin') || lowerMessage.includes('spin')) {
+      return {
+        icon: <Activity size={20} />,
+        color: 'from-yellow-500 to-orange-500',
+        bgColor: 'bg-yellow-500/10',
+        borderColor: 'border-yellow-500/30',
+        text: 'Spun the wheel',
+        category: 'Spin',
+        userName,
+        amount
+      };
+    } else if (lowerTitle.includes('sign up') || lowerMessage.includes('sign up')) {
+      return {
+        icon: <Users size={20} />,
+        color: 'from-green-500 to-emerald-500',
+        bgColor: 'bg-green-500/10',
+        borderColor: 'border-green-500/30',
+        text: 'Joined the platform',
+        category: 'Sign Up',
+        userName,
+        amount
+      };
+    } else {
+      return {
+        icon: <TrendingUp size={20} />,
+        color: 'from-gray-500 to-gray-600',
+        bgColor: 'bg-gray-500/10',
+        borderColor: 'border-gray-500/30',
+        text: 'Activity',
+        category: 'General',
+        userName,
+        amount
+      };
     }
-  ];
+  };
+
+  // Format timestamp to relative time
+  const getRelativeTime = (dateString) => {
+    const now = new Date();
+    const activityDate = new Date(dateString);
+    const diffInSeconds = Math.floor((now - activityDate) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} mins ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    
+    return activityDate.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const fetchRecentActivity = async () => {
+    try {
+      setLoading(true);
+      const data = await axiosSecure.get(`/recent-activities`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setActivitiesData(data.data.data);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-[#1c1c1c] rounded-xl border border-gray-800 p-6 shadow-lg">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-white text-lg font-semibold">Recent Activity</h3>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="animate-spin text-yellow-500" size={32} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-[#1c1c1c] rounded-lg p-5 shadow-lg">
-      <h3 className="text-white text-base font-semibold mb-4">Recent Activity</h3>
-      
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-800">
-              <th className="text-gray-500 text-left py-2.5 px-3 font-medium text-xs">NO</th>
-              <th className="text-gray-500 text-left py-2.5 px-3 font-medium text-xs">Name</th>
-              <th className="text-gray-500 text-left py-2.5 px-3 font-medium text-xs">Ticket ID</th>
-              <th className="text-gray-500 text-left py-2.5 px-3 font-medium text-xs">Purchase Date</th>
-              <th className="text-gray-500 text-left py-2.5 px-3 font-medium text-xs">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activities.map((activity, idx) => (
-              <tr 
-                key={activity.id} 
-                className={`${idx !== activities.length - 1 ? 'border-b border-gray-800' : ''} hover:bg-[#252525] transition-colors`}
-              >
-                <td className="py-3 px-3">
-                  <span className="text-white text-xs">{activity.id}</span>
-                </td>
-                <td className="py-3 px-3">
-                  <div className="flex items-center gap-2.5">
-                    <img 
-                      src={activity.avatar} 
-                      alt={activity.name}
-                      className="w-7 h-7 rounded-full object-cover"
-                    />
-                    <span className="text-white text-xs">{activity.name}</span>
-                  </div>
-                </td>
-                <td className="py-3 px-3">
-                  <span className="text-white text-xs">{activity.ticketId}</span>
-                </td>
-                <td className="py-3 px-3">
-                  <span className="text-white text-xs">{activity.purchaseDate}</span>
-                </td>
-                <td className="py-3 px-3">
-                  <span className="text-white text-xs">{activity.amount}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="bg-[#1c1c1c] rounded-xl border border-gray-800 p-6 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-br from-yellow-500 to-orange-500 w-10 h-10 rounded-lg flex items-center justify-center shadow-lg">
+            <Activity className="text-white" size={20} />
+          </div>
+          <div>
+            <h3 className="text-white text-lg font-semibold">Recent Activity</h3>
+            <p className="text-gray-400 text-xs">Live updates from your platform</p>
+          </div>
+        </div>
+        {/* <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-lg">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-green-400 text-xs font-medium">Live</span>
+        </div> */}
       </div>
+      
+      {/* Activities List */}
+      {activitiesData.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <Activity className="text-gray-600 mb-3" size={48} />
+          <p className="text-gray-400 text-sm">No recent activities</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {activitiesData.map((activity) => {
+            const config = getActivityConfig(activity.title, activity.message);
+            
+            return (
+              <div 
+                key={activity._id}
+                className="bg-gradient-to-r from-[#252525] to-[#1f1f1f] rounded-xl p-4 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 hover:shadow-xl hover:shadow-black/30 group relative overflow-hidden"
+              >
+                {/* Animated background gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${config.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                
+                <div className="relative flex items-start gap-4">
+                  {/* Activity Icon */}
+                  <div className={`bg-gradient-to-br ${config.color} w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                    {config.icon}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    {/* Header Row */}
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={`text-xs font-bold uppercase tracking-wider bg-gradient-to-r ${config.color} bg-clip-text text-transparent`}>
+                            {config.category}
+                          </span>
+                        </div>
+                        <p className="text-white font-medium text-sm leading-tight">
+                          <span className="text-yellow-400">{config.userName}</span>
+                          <span className="text-gray-400 ml-1">{config.text}</span>
+                        </p>
+                      </div>
+                      
+                      {/* Amount Badge */}
+                      {config.amount && (
+                        <div className={`${config.bgColor} border ${config.borderColor} px-3 py-1 rounded-lg`}>
+                          <span className={`bg-gradient-to-r ${config.color} bg-clip-text text-transparent font-bold text-sm`}>
+                            {config.amount} credits
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Message */}
+                    <p className="text-gray-400 text-xs leading-relaxed mb-3">
+                      {activity.message}
+                    </p>
+                    
+                    {/* Footer */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <Clock size={12} />
+                        <span>{getRelativeTime(activity.createdAt)}</span>
+                      </div>
+                      
+                      {/* Status Indicator */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <span className="text-green-400 text-xs font-medium">Completed</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    
     </div>
   );
 };
@@ -325,7 +455,7 @@ function Dashboard() {
       </div>
 
       {/* Recent Activity Table */}
-      <RecentActivityTable />
+      <RecentActivityFeed />
     </div>
   );
 }

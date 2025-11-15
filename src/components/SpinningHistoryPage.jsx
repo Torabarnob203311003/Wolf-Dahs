@@ -192,38 +192,63 @@ const SpinningHistoryPage = () => {
         </div>
 
         {/* Pagination */}
-        <div className="bg-[#161616] px-5 py-4 border-t border-gray-800 flex items-center justify-between">
-          <div className="text-gray-400 text-xs">
+       <div className="bg-[#161616] px-5 py-4 border-t border-gray-800 flex items-center justify-between">
+          <span className="text-gray-400 text-xs">
             Page {currentPage} of {totalPages}
-          </div>
-          <div className="flex gap-2">
+          </span>
+
+          <div className="flex items-center gap-1.5">
+
             <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className="bg-[#0f0f0f] text-white px-3 py-1.5 rounded text-xs hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              Prev
             </button>
 
-            {[...Array(totalPages)].map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentPage(idx + 1)}
-                className={`px-3 py-1.5 rounded text-xs transition-colors ${currentPage === idx + 1 ? 'bg-blue-600 text-white' : 'bg-[#0f0f0f] text-white hover:bg-[#2a2a2a]'}`}
-              >
-                {idx + 1}
-              </button>
-            ))}
+            {(() => {
+              const window = 3
+              const pages = []
+              const start = Math.max(1, currentPage - window)
+              const end = Math.min(totalPages, currentPage + window)
+
+              if (start > 1) pages.push(1, '...')
+              for (let i = start; i <= end; i++) pages.push(i)
+              if (end < totalPages) pages.push('...', totalPages)
+
+              return pages.map((p, i) =>
+                typeof p === 'number' ? (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(p)}
+                    className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                      currentPage === p
+                        ? 'bg-[#FACC15] text-black'
+                        : 'bg-[#0f0f0f] text-white hover:text-black hover:bg-[#f1c202]'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ) : (
+                  <span key={i} className="text-gray-500 text-xs px-2">
+                    {p}
+                  </span>
+                )
+              )
+            })()}
 
             <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className="bg-[#0f0f0f] text-white px-3 py-1.5 rounded text-xs hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
+
           </div>
         </div>
+
       </div>
     </div>
   );
