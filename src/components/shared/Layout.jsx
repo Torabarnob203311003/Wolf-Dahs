@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import axiosSecure from '../../lib/axiosSecure';
 
 function Layout() {
-  const {user, loading,logout} = useAuth();
+  const {user,logout} = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [notifications, setNotifications] = useState([]);

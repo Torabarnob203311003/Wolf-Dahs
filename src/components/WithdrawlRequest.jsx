@@ -1,114 +1,52 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { Loader2, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
+import axiosSecure from '../lib/axiosSecure';
 
 const WithdrawalRequest = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [withdrawalRequests, setWithdrawalRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const itemsPerPage = 10;
 
-  // Mock withdrawal requests data
-  const withdrawalRequests = [
-    {
-      _id: '1',
-      userId: 'user123',
-      userName: 'John Doe',
-      userEmail: 'john@example.com',
-      amount: 5000,
-      valueUSD: 250,
-      method: 'PayPal',
-      accountDetails: 'john.doe@paypal.com',
-      status: 'pending',
-      requestDate: '2025-11-10T10:30:00Z',
-      processedDate: null,
-      notes: '',
-    },
-    {
-      _id: '2',
-      userId: 'user456',
-      userName: 'Sarah Smith',
-      userEmail: 'sarah@example.com',
-      amount: 10000,
-      valueUSD: 500,
-      method: 'Bank Transfer',
-      accountDetails: 'Account: 1234567890, Bank: Chase',
-      status: 'approved',
-      requestDate: '2025-11-08T14:20:00Z',
-      processedDate: '2025-11-09T09:15:00Z',
-      notes: 'Processed successfully',
-    },
-    {
-      _id: '3',
-      userId: 'user789',
-      userName: 'Mike Johnson',
-      userEmail: 'mike@example.com',
-      amount: 3000,
-      valueUSD: 150,
-      method: 'Cryptocurrency',
-      accountDetails: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-      status: 'rejected',
-      requestDate: '2025-11-07T09:15:00Z',
-      processedDate: '2025-11-07T16:30:00Z',
-      notes: 'Insufficient account verification',
-    },
-    {
-      _id: '4',
-      userId: 'user234',
-      userName: 'Emily Davis',
-      userEmail: 'emily@example.com',
-      amount: 7500,
-      valueUSD: 375,
-      method: 'PayPal',
-      accountDetails: 'emily.davis@paypal.com',
-      status: 'pending',
-      requestDate: '2025-11-09T11:30:00Z',
-      processedDate: null,
-      notes: '',
-    },
-    {
-      _id: '5',
-      userId: 'user567',
-      userName: 'David Wilson',
-      userEmail: 'david@example.com',
-      amount: 15000,
-      valueUSD: 750,
-      method: 'Bank Transfer',
-      accountDetails: 'Account: 9876543210, Bank: Wells Fargo',
-      status: 'approved',
-      requestDate: '2025-11-06T13:20:00Z',
-      processedDate: '2025-11-07T10:00:00Z',
-      notes: 'Transferred successfully',
-    },
-    {
-      _id: '6',
-      userId: 'user890',
-      userName: 'Lisa Anderson',
-      userEmail: 'lisa@example.com',
-      amount: 4000,
-      valueUSD: 200,
-      method: 'PayPal',
-      accountDetails: 'lisa.anderson@paypal.com',
-      status: 'processing',
-      requestDate: '2025-11-11T15:10:00Z',
-      processedDate: null,
-      notes: 'Under review',
-    },
-  ];
+  // Fetch withdrawal requests
+  const fetchWithdrawals = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosSecure.get('/withdrawal');
+        console.log(response.data);
+        
+      if (response.data.success) {
+        setWithdrawalRequests(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching withdrawals:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWithdrawals();
+  }, []);
 
   // Filter options
-  const filterOptions = [
+  const filterOptions = useMemo(() => [
     { value: 'all', label: 'All Requests', count: withdrawalRequests.length },
     { value: 'pending', label: 'Pending', count: withdrawalRequests.filter(r => r.status === 'pending').length },
     { value: 'processing', label: 'Processing', count: withdrawalRequests.filter(r => r.status === 'processing').length },
     { value: 'approved', label: 'Approved', count: withdrawalRequests.filter(r => r.status === 'approved').length },
     { value: 'rejected', label: 'Rejected', count: withdrawalRequests.filter(r => r.status === 'rejected').length },
-  ];
+  ], [withdrawalRequests]);
 
   // Compute filtered data
   const filteredRequests = useMemo(() => {
     if (selectedFilter === 'all') return withdrawalRequests;
     return withdrawalRequests.filter(request => request.status === selectedFilter);
-  }, [selectedFilter]);
+  }, [selectedFilter, withdrawalRequests]);
 
   const paginatedRequests = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -121,13 +59,13 @@ const WithdrawalRequest = () => {
   const stats = useMemo(() => {
     const totalRequests = withdrawalRequests.length;
     const pendingCount = withdrawalRequests.filter(r => r.status === 'pending').length;
-    const totalAmount = withdrawalRequests.reduce((sum, r) => sum + r.valueUSD, 0);
+    const totalAmount = withdrawalRequests.reduce((sum, r) => sum + (r.valueUSD || r.amount), 0);
     const approvedAmount = withdrawalRequests
       .filter(r => r.status === 'approved')
-      .reduce((sum, r) => sum + r.valueUSD, 0);
+      .reduce((sum, r) => sum + (r.valueUSD || r.amount), 0);
 
     return { totalRequests, pendingCount, totalAmount, approvedAmount };
-  }, []);
+  }, [withdrawalRequests]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -147,29 +85,24 @@ const WithdrawalRequest = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'pending':
-        return '⏳';
+        return <Clock size={14} />;
       case 'processing':
-        return '🔄';
+        return <Loader2 size={14} className="animate-spin" />;
       case 'approved':
-        return '✓';
+        return <CheckCircle size={14} />;
       case 'rejected':
-        return '✕';
+        return <XCircle size={14} />;
       default:
-        return '•';
+        return null;
     }
   };
 
   const getMethodIcon = (method) => {
-    switch (method) {
-      case 'PayPal':
-        return '💳';
-      case 'Bank Transfer':
-        return '🏦';
-      case 'Cryptocurrency':
-        return '₿';
-      default:
-        return '💰';
-    }
+    const methodLower = method?.toLowerCase() || '';
+    if (methodLower.includes('paypal')) return '💳';
+    if (methodLower.includes('bank')) return '🏦';
+    if (methodLower.includes('crypto')) return '₿';
+    return '💰';
   };
 
   const handlePageChange = (page) => {
@@ -178,11 +111,40 @@ const WithdrawalRequest = () => {
     }
   };
 
-  const handleAction = (requestId, action) => {
-    // Simulate API call
-    alert(`${action} request ${requestId}`);
-    setSelectedRequest(null);
+  const handleAction = async (requestId, action) => {
+    try {
+      setActionLoading(true);
+      
+      const endpoint = action === 'Approve' 
+        ? `/withdrawal/${requestId}/approve` 
+        : `/withdrawal/${requestId}/reject`;
+      
+      const response = await axiosSecure.patch(endpoint);
+      
+      if (response.data.success) {
+        // Refresh the list
+        await fetchWithdrawals();
+        setSelectedRequest(null);
+        alert(`Request ${action.toLowerCase()}d successfully!`);
+      }
+    } catch (error) {
+      console.error(`Error ${action.toLowerCase()}ing request:`, error);
+      alert(`Failed to ${action.toLowerCase()} request. Please try again.`);
+    } finally {
+      setActionLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-yellow-500 mx-auto mb-4" size={48} />
+          <p className="text-gray-400">Loading withdrawal requests...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white p-6">
@@ -196,21 +158,33 @@ const WithdrawalRequest = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
-            <p className="text-gray-400 text-sm mb-1">Total Requests</p>
+            <div className="flex items-center gap-3 mb-2">
+              <DollarSign className="text-gray-400" size={20} />
+              <p className="text-gray-400 text-sm">Total Requests</p>
+            </div>
             <p className="text-2xl font-bold">{stats.totalRequests}</p>
           </div>
           <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
-            <p className="text-gray-400 text-sm mb-1">Pending Review</p>
+            <div className="flex items-center gap-3 mb-2">
+              <Clock className="text-yellow-500" size={20} />
+              <p className="text-gray-400 text-sm">Pending Review</p>
+            </div>
             <p className="text-2xl font-bold text-[#FACC15]">{stats.pendingCount}</p>
           </div>
-          <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
-            <p className="text-gray-400 text-sm mb-1">Total Amount</p>
+          {/* <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
+            <div className="flex items-center gap-3 mb-2">
+              <DollarSign className="text-white" size={20} />
+              <p className="text-gray-400 text-sm">Total Amount</p>
+            </div>
             <p className="text-2xl font-bold text-white">${stats.totalAmount.toLocaleString()}</p>
           </div>
           <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
-            <p className="text-gray-400 text-sm mb-1">Approved Amount</p>
+            <div className="flex items-center gap-3 mb-2">
+              <CheckCircle className="text-green-400" size={20} />
+              <p className="text-gray-400 text-sm">Approved Amount</p>
+            </div>
             <p className="text-2xl font-bold text-green-400">${stats.approvedAmount.toLocaleString()}</p>
-          </div>
+          </div> */}
         </div>
 
         {/* Filter buttons */}
@@ -257,35 +231,35 @@ const WithdrawalRequest = () => {
                   <tr key={request._id} className="border-b border-gray-800 hover:bg-[#1f1f1f] transition">
                     <td className="py-4 px-6">
                       <div>
-                        <p className="font-medium">{request.userName}</p>
-                        <p className="text-sm text-gray-400">{request.userEmail}</p>
+                        <p className="font-medium">{request.userName || request.userId?.userName || 'N/A'}</p>
+                        <p className="text-sm text-gray-400">{request.payoutDetails.emailOrAccountId || request.userId?.email || 'N/A'}</p>
                       </div>
                     </td>
                     <td className="py-4 px-6">
                       <div>
-                        <p className="font-bold text-[#FACC15]">${request.valueUSD}</p>
-                        <p className="text-sm text-gray-400">{request.amount.toLocaleString()} pts</p>
+                        <p className="font-bold text-[#FACC15]">${request.rewardPoint || request.amount}</p>
+                        {/* <p className="text-sm text-gray-400">{(request.amount || 0).toLocaleString()} pts</p> */}
                       </div>
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2">
-                        <span className="text-xl">{getMethodIcon(request.method)}</span>
-                        <span className="text-sm">{request.method}</span>
+                        <span className="text-xl">{getMethodIcon(request.payoutMethod)}</span>
+                        <span className="text-sm">{request.payoutMethod || 'N/A'}</span>
                       </div>
                     </td>
                     <td className="py-4 px-6">
                       <span className={`${getStatusColor(request.status)} px-3 py-1.5 rounded-full text-xs font-bold uppercase inline-flex items-center gap-1`}>
-                        <span>{getStatusIcon(request.status)}</span>
+                        {getStatusIcon(request.status)}
                         {request.status}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-gray-400 text-sm">
-                      {new Date(request.requestDate).toLocaleDateString()}
+                      {new Date(request.requestDate || request.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-4 px-6">
                       <button
                         onClick={() => setSelectedRequest(request)}
-                        className="px-3 py-1.5 bg-[#FACC15] hover:bg-[#2bc4a4] text-black rounded-md text-sm font-medium transition"
+                        className="px-3 py-1.5 bg-[#FACC15] hover:bg-yellow-400 text-black rounded-md text-sm font-medium transition"
                       >
                         View
                       </button>
@@ -299,7 +273,8 @@ const WithdrawalRequest = () => {
           {/* Empty state */}
           {paginatedRequests.length === 0 && (
             <div className="text-center py-10 text-gray-400">
-              No withdrawal requests found for this filter.
+              <DollarSign className="mx-auto mb-3 text-gray-600" size={48} />
+              <p>No withdrawal requests found for this filter.</p>
             </div>
           )}
 
@@ -316,7 +291,7 @@ const WithdrawalRequest = () => {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                     currentPage === 1
                       ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                      : 'bg-[#36d7b7] text-black hover:bg-[#2bc4a4]'
+                      : 'bg-[#FACC15] text-black hover:bg-yellow-400'
                   }`}
                 >
                   Previous
@@ -327,7 +302,7 @@ const WithdrawalRequest = () => {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                     currentPage === totalPages
                       ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                      : 'bg-[#36d7b7] text-black hover:bg-[#2bc4a4]'
+                      : 'bg-[#FACC15] text-black hover:bg-yellow-400'
                   }`}
                 >
                   Next
@@ -361,12 +336,12 @@ const WithdrawalRequest = () => {
               {/* Status Badge */}
               <div className="flex items-center justify-between">
                 <span className={`${getStatusColor(selectedRequest.status)} px-4 py-2 rounded-full text-sm font-bold uppercase inline-flex items-center gap-2`}>
-                  <span className="text-lg">{getStatusIcon(selectedRequest.status)}</span>
+                  {getStatusIcon(selectedRequest.status)}
                   {selectedRequest.status}
                 </span>
                 <div className="text-right">
                   <p className="text-gray-400 text-sm">Requested</p>
-                  <p className="font-medium">{new Date(selectedRequest.requestDate).toLocaleString()}</p>
+                  <p className="font-medium">{new Date(selectedRequest.requestDate || selectedRequest.createdAt).toLocaleString()}</p>
                 </div>
               </div>
 
@@ -376,15 +351,15 @@ const WithdrawalRequest = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Name:</span>
-                    <span className="font-medium">{selectedRequest.userName}</span>
+                    <span className="font-medium">{selectedRequest.userName || selectedRequest.userId?.userName || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Email:</span>
-                    <span className="font-medium">{selectedRequest.userEmail}</span>
+                    <span className="font-medium">{selectedRequest.userEmail || selectedRequest.userId?.email || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">User ID:</span>
-                    <span className="font-medium text-gray-500">{selectedRequest.userId}</span>
+                    <span className="font-medium text-gray-500">{selectedRequest.userId?._id || selectedRequest.userId}</span>
                   </div>
                 </div>
               </div>
@@ -395,15 +370,11 @@ const WithdrawalRequest = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Reward Points:</span>
-                    <span className="font-bold">{selectedRequest.amount.toLocaleString()} pts</span>
+                    <span className="font-bold">{(selectedRequest.amount || 0).toLocaleString()} pts</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">USD Value:</span>
-                    <span className="font-bold text-[#36d7b7]">${selectedRequest.valueUSD}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Conversion Rate:</span>
-                    <span className="text-sm">20 pts = $1</span>
+                    <span className="font-bold text-[#FACC15]">${selectedRequest.valueUSD || selectedRequest.amount}</span>
                   </div>
                 </div>
               </div>
@@ -415,8 +386,8 @@ const WithdrawalRequest = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{getMethodIcon(selectedRequest.method)}</span>
                     <div>
-                      <p className="font-medium">{selectedRequest.method}</p>
-                      <p className="text-sm text-gray-400 break-all">{selectedRequest.accountDetails}</p>
+                      <p className="font-medium">{selectedRequest.method || 'N/A'}</p>
+                      <p className="text-sm text-gray-400 break-all">{selectedRequest.accountDetails || 'No details provided'}</p>
                     </div>
                   </div>
                 </div>
@@ -446,15 +417,19 @@ const WithdrawalRequest = () => {
                 <div className="flex gap-3 pt-4 border-t border-gray-800">
                   <button
                     onClick={() => handleAction(selectedRequest._id, 'Approve')}
-                    className="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition"
+                    disabled={actionLoading}
+                    className="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    ✓ Approve Request
+                    {actionLoading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle size={18} />}
+                    Approve Request
                   </button>
                   <button
                     onClick={() => handleAction(selectedRequest._id, 'Reject')}
-                    className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition"
+                    disabled={actionLoading}
+                    className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    ✕ Reject Request
+                    {actionLoading ? <Loader2 className="animate-spin" size={18} /> : <XCircle size={18} />}
+                    Reject Request
                   </button>
                 </div>
               )}
