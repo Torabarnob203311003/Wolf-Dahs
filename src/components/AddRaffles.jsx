@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 import JoditEditor from 'jodit-react';
+import toast from 'react-hot-toast';
 
 // Jodit Editor Configuration - SIMPLIFIED
 const editorConfig = {
@@ -158,8 +159,6 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
 
     const addRaffleCard = async (formDataFromComponent) => {
         try {
-            console.log('========== DEBUGGING INFO ==========');
-            console.log('FormData contents:');
             for (let [key, value] of formDataFromComponent.entries()) {
                 if (value instanceof File) {
                     console.log(`  ${key}: File(name: ${value.name}, size: ${value.size} bytes, type: ${value.type})`);
@@ -167,7 +166,6 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
                     console.log(`  ${key}: ${value}`);
                 }
             }
-            console.log('====================================');
 
             // Create new FormData with correct field name "thumbnail"
             const formDataToSend = new FormData();
@@ -181,7 +179,6 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
             const imageFile = formDataFromComponent.get('image');
             if (imageFile) {
                 formDataToSend.append('thumbnail', imageFile); // ✅ Changed from "image" to "thumbnail"
-                console.log(`✅ Adding thumbnail field: ${imageFile.name}`);
             }
 
             console.log('\n📤 Sending request...');
@@ -195,8 +192,10 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
                 }
             );
 
-            console.log('✅ Card added successfully!');
-            console.log('Response:', response.data);
+            if(response.data.success){
+                toast.success('Raffle Card Added Successfully!');
+            }
+            
             return response.data;
 
         } catch (error) {

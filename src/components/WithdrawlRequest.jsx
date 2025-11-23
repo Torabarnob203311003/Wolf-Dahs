@@ -39,7 +39,7 @@ const WithdrawalRequest = () => {
     { value: 'all', label: 'All Requests', count: withdrawalRequests.length },
     { value: 'pending', label: 'Pending', count: withdrawalRequests.filter(r => r.status === 'pending').length },
     { value: 'processing', label: 'Processing', count: withdrawalRequests.filter(r => r.status === 'processing').length },
-    { value: 'approved', label: 'Approved', count: withdrawalRequests.filter(r => r.status === 'approved').length },
+    { value: 'completed', label: 'Approved', count: withdrawalRequests.filter(r => r.status === 'completed').length },
     { value: 'rejected', label: 'Rejected', count: withdrawalRequests.filter(r => r.status === 'rejected').length },
   ], [withdrawalRequests]);
 
@@ -409,7 +409,7 @@ const WithdrawalRequest = () => {
               {selectedRequest.status === 'pending' && (
                 <div className="flex gap-3 pt-4 border-t border-gray-800">
                   <button
-                    onClick={() => handleAction(selectedRequest._id, 'Approve')}
+                    onClick={() => handleAction(selectedRequest._id, 'completed')}
                     disabled={actionLoading}
                     className="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >

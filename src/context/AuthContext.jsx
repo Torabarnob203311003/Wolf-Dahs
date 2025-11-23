@@ -53,11 +53,15 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
     try {
-        const res = await axiosSecure.post('/users/login', { email, password })
+        const res = await axiosSecure.post('/users/login-admin', { email, password })
         const data = res.data.data;
         
         const { jwtToken, user } = data
         
+        if(user.role !== 'admin') {
+            throw new Error('Unauthorized role')
+        }
+
         // Save token
         localStorage.setItem('token', jwtToken)
         
