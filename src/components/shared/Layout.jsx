@@ -4,6 +4,7 @@ import { Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import axiosSecure from '../../lib/axiosSecure';
+import { Toaster } from 'react-hot-toast';
 
 function Layout() {
   const {user,logout} = useAuth();
@@ -296,6 +297,7 @@ function Layout() {
           <Outlet />
         </main>
       </div>
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Loader2, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
+import toast from 'react-hot-toast';
 
 const WithdrawalRequest = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -111,6 +112,7 @@ const WithdrawalRequest = () => {
     }
   };
 
+  // old code 
   const handleAction = async (requestId, action) => {
     try {
       setActionLoading(true);
@@ -122,10 +124,13 @@ const WithdrawalRequest = () => {
       const response = await axiosSecure.patch(endpoint);
       
       if (response.data.success) {
-        // Refresh the list
-        await fetchWithdrawals();
         setSelectedRequest(null);
-        alert(`Request ${action.toLowerCase()}d successfully!`);
+
+        toast.success(`Request ${action.toLowerCase()}d successfully!`);
+
+        setTimeout(async () =>{
+          await fetchWithdrawals();
+        }, 2000);
       }
     } catch (error) {
       console.error(`Error ${action.toLowerCase()}ing request:`, error);
@@ -134,6 +139,8 @@ const WithdrawalRequest = () => {
       setActionLoading(false);
     }
   };
+
+
 
   if (loading) {
     return (
@@ -171,20 +178,6 @@ const WithdrawalRequest = () => {
             </div>
             <p className="text-2xl font-bold text-[#FACC15]">{stats.pendingCount}</p>
           </div>
-          {/* <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
-            <div className="flex items-center gap-3 mb-2">
-              <DollarSign className="text-white" size={20} />
-              <p className="text-gray-400 text-sm">Total Amount</p>
-            </div>
-            <p className="text-2xl font-bold text-white">${stats.totalAmount.toLocaleString()}</p>
-          </div>
-          <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
-            <div className="flex items-center gap-3 mb-2">
-              <CheckCircle className="text-green-400" size={20} />
-              <p className="text-gray-400 text-sm">Approved Amount</p>
-            </div>
-            <p className="text-2xl font-bold text-green-400">${stats.approvedAmount.toLocaleString()}</p>
-          </div> */}
         </div>
 
         {/* Filter buttons */}
@@ -355,7 +348,7 @@ const WithdrawalRequest = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Email:</span>
-                    <span className="font-medium">{selectedRequest.userEmail || selectedRequest.userId?.email || 'N/A'}</span>
+                    <span className="font-medium">{selectedRequest.email || selectedRequest.userId?.email || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">User ID:</span>
@@ -370,11 +363,11 @@ const WithdrawalRequest = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Reward Points:</span>
-                    <span className="font-bold">{(selectedRequest.amount || 0).toLocaleString()} pts</span>
+                    <span className="font-bold">{(selectedRequest.rewardPoint || 0).toLocaleString()} pts</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">USD Value:</span>
-                    <span className="font-bold text-[#FACC15]">${selectedRequest.valueUSD || selectedRequest.amount}</span>
+                    <span className="font-bold text-[#FACC15]">${selectedRequest.rewardPoint || selectedRequest.amount}</span>
                   </div>
                 </div>
               </div>
@@ -384,10 +377,10 @@ const WithdrawalRequest = () => {
                 <h3 className="text-sm font-medium text-gray-400 mb-3">Payment Method</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{getMethodIcon(selectedRequest.method)}</span>
+                    <span className="text-2xl">{getMethodIcon(selectedRequest.payoutMethod)}</span>
                     <div>
-                      <p className="font-medium">{selectedRequest.method || 'N/A'}</p>
-                      <p className="text-sm text-gray-400 break-all">{selectedRequest.accountDetails || 'No details provided'}</p>
+                      <p className="font-medium">{selectedRequest.payoutMethod || 'N/A'}</p>
+                      <p className="text-sm text-gray-400 break-all">{selectedRequest.payoutDetails.emailOrAccountId || 'No details provided'}</p>
                     </div>
                   </div>
                 </div>
