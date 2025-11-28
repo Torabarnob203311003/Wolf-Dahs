@@ -409,7 +409,7 @@ const WithdrawalRequest = () => {
               {selectedRequest.status === 'pending' && (
                 <div className="flex gap-3 pt-4 border-t border-gray-800">
                   <button
-                    onClick={() => handleAction(selectedRequest._id, 'completed')}
+                    onClick={() => handleAction(selectedRequest._id, 'Approve')}
                     disabled={actionLoading}
                     className="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
