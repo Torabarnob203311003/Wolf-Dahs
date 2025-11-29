@@ -11,7 +11,6 @@ function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Delete Modal States
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -28,12 +27,12 @@ function UserManagement() {
       const response = await axiosSecure.get('/users/get-all-users');
 
       if (response.data.success && response.data.data) {
-        const transformedUsers = response.data.data.map((user, index) => ({
+        const transformedUsers = response.data.data.map((user) => ({
           id: user._id,
           name: user.userName,
           email: user.email,
           tracks: 0,
-          ticketId: `#${String(index + 1).padStart(6, '0')}`,
+          ticketId: user._id,
           status: user.isVerified ? 'Confirmed' : 'Pending',
           isBlocked: user.isBlocked,
           isDeleted: user.isDeleted
@@ -167,8 +166,8 @@ function UserManagement() {
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">No</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Name</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Email</th>
-                    <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Tracks</th>
-                    <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Ticket ID</th>
+                    {/* <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Tracks</th> */}
+                    <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">User ID</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Status</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Actions</th>
                   </tr>
@@ -193,7 +192,7 @@ function UserManagement() {
                           </div>
                         </td>
                         <td className="py-4 px-6 text-gray-400 text-sm">{user.email}</td>
-                        <td className="py-4 px-6 text-gray-300 text-sm font-medium">{user.tracks}</td>
+                        {/* <td className="py-4 px-6 text-gray-300 text-sm font-medium">{user.tracks}</td> */}
                         <td className="py-4 px-6 text-gray-400 text-sm font-mono">{user.ticketId}</td>
                         <td className="py-4 px-6">
                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>

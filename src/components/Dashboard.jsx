@@ -31,7 +31,7 @@ const ChartCard = () => {
   const [activeTab, setActiveTab] = useState("Monthly");
   const [chartData, setChartData] = useState([]);
   const [growth, setGrowth] = useState("0%");
-  const tabs = ["Daily", "Weekly", "Monthly", "Yearly"];
+  const tabs = ["Daily", "Monthly", "Yearly"];
 
   // 🔹 Fetch user growth data
   const fetchUserGrowth = async (range) => {

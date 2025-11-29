@@ -12,7 +12,7 @@ const SpinningHistoryPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const itemsPerPage = 10; // can also be dynamic if your API supports it
+  const itemsPerPage = 10;
 
   // Fetch API with backend pagination
   const fetchSpinHistoryOverview = async (page = 1) => {
@@ -91,7 +91,7 @@ const SpinningHistoryPage = () => {
           </div>
         </div>
 
-        <div className="bg-[#1c1c1c] rounded-lg p-4 shadow-lg">
+        {/* <div className="bg-[#1c1c1c] rounded-lg p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-xs mb-1">Total Winnings</p>
@@ -101,7 +101,7 @@ const SpinningHistoryPage = () => {
               <DollarSign className="text-white" size={20} />
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="bg-[#1c1c1c] rounded-lg p-4 shadow-lg">
           <div className="flex items-center justify-between">
@@ -119,7 +119,7 @@ const SpinningHistoryPage = () => {
       {/* Filters */}
       <div className="bg-[#1c1c1c] rounded-lg p-5 shadow-lg mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-2">
+          {/* <div className="md:col-span-2">
             <label className="text-gray-400 text-xs block mb-2">Search</label>
             <input
               type="text"
@@ -131,7 +131,7 @@ const SpinningHistoryPage = () => {
               }}
               className="bg-[#0f0f0f] text-white text-sm pl-3 pr-4 py-2 rounded border border-gray-700 focus:border-blue-500 focus:outline-none w-full"
             />
-          </div>
+          </div> */}
 
           <div>
             <label className="text-gray-400 text-xs block mb-2">Prize Type</label>
