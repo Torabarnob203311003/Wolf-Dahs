@@ -208,30 +208,7 @@ function Login() {
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
-
-            <p className="text-center text-sm" style={{ color: "#999999" }}>
-              Don't have an account?{" "}
-              <a
-
-                href="/signup"
-                className="font-semibold transition-all hover:underline"
-                style={{ color: "#FF9933" }}
-              >
-                Sign Up
-              </a>
-            </p>
           </form>
-
-          <div className="mt-8 text-center text-xs" style={{ color: "#999999" }}>
-            © 2025 <span className="font-semibold">NORTHSTAR</span> COMPETITIONS © 2025 · All rights reserved ·{" "}
-            <a
-              href="/terms"
-              className="hover:underline"
-              style={{ color: "#FF9933" }}
-            >
-              Term & Condition
-            </a>
-          </div>
         </div>
       </div>
 
