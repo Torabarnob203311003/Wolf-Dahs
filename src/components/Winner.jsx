@@ -134,7 +134,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { Search, ChevronLeft, ChevronRight, Trophy, Ticket, DollarSign, Users } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Trophy, Ticket, DollarSign, Users, PoundSterling } from 'lucide-react';
 import axiosSecure from "../lib/axiosSecure";
 import { ScaleLoader } from "react-spinners";
 
@@ -226,11 +226,11 @@ function Winner() {
         <div className="bg-[#1a1a1a] border border-gray-800 rounded-lg p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm mb-1">Total Prize Pool</p>
-              <p className="text-2xl font-bold text-white">${totalPrizeAmount.toLocaleString()}</p>
+              <p className="text-gray-400 text-sm mb-1">Total Value</p>
+              <p className="text-2xl font-bold text-white">£{totalPrizeAmount.toLocaleString()}</p>
             </div>
             <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-yellow-400" />
+              <PoundSterling className="w-6 h-6 text-yellow-400" />
             </div>
           </div>
         </div>
@@ -314,7 +314,7 @@ function Winner() {
                   <tr className="border-b border-gray-800">
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">No</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Raffle</th>
-                    <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Prize Amount</th>
+                    <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Ticket Prize</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Total Tickets</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Per User Limit</th>
                     <th className="text-left py-4 px-6 font-semibold text-gray-400 text-xs uppercase tracking-wider">Tickets Sold</th>
@@ -348,7 +348,7 @@ function Winner() {
                         </td>
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-1.5 text-yellow-400 font-semibold text-sm">
-                            <DollarSign className="w-4 h-4" />
+                            <PoundSterling className="w-4 h-4" />
                             {card.price.toLocaleString()}
                           </div>
                         </td>

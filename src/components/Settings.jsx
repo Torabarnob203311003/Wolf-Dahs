@@ -314,16 +314,140 @@ function BasicProfileSection({ userId }) {
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">City</label>
             <select
-              value={formData.city}
-              onChange={(e) => handleInputChange('city', e.target.value)}
-              className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-            >
-              <option value="">Select Your City</option>
-              <option value="new-york">New York</option>
-              <option value="london">London</option>
-              <option value="toronto">Toronto</option>
-              <option value="sydney">Sydney</option>
-            </select>
+  value={formData.city}
+  onChange={(e) => handleInputChange('city', e.target.value)}
+  className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+>
+  <option value="">Select Your City</option>
+  
+  <optgroup label="England">
+    <option value="london">London</option>
+    <option value="birmingham">Birmingham</option>
+    <option value="manchester">Manchester</option>
+    <option value="leeds">Leeds</option>
+    <option value="liverpool">Liverpool</option>
+    <option value="sheffield">Sheffield</option>
+    <option value="bristol">Bristol</option>
+    <option value="nottingham">Nottingham</option>
+    <option value="leicester">Leicester</option>
+    <option value="coventry">Coventry</option>
+    <option value="kingston-upon-hull">Kingston upon Hull</option>
+    <option value="newcastle">Newcastle upon Tyne</option>
+    <option value="stoke-on-trent">Stoke-on-Trent</option>
+    <option value="southampton">Southampton</option>
+    <option value="derby">Derby</option>
+    <option value="portsmouth">Portsmouth</option>
+    <option value="brighton">Brighton</option>
+    <option value="plymouth">Plymouth</option>
+    <option value="reading">Reading</option>
+    <option value="northampton">Northampton</option>
+    <option value="luton">Luton</option>
+    <option value="wolverhampton">Wolverhampton</option>
+    <option value="bolton">Bolton</option>
+    <option value="swindon">Swindon</option>
+    <option value="norwich">Norwich</option>
+    <option value="milton-keynes">Milton Keynes</option>
+    <option value="peterborough">Peterborough</option>
+    <option value="blackpool">Blackpool</option>
+    <option value="bournemouth">Bournemouth</option>
+    <option value="southend-on-sea">Southend-on-Sea</option>
+    <option value="warrington">Warrington</option>
+    <option value="york">York</option>
+    <option value="oxford">Oxford</option>
+    <option value="cambridge">Cambridge</option>
+    <option value="bath">Bath</option>
+    <option value="canterbury">Canterbury</option>
+    <option value="chester">Chester</option>
+    <option value="colchester">Colchester</option>
+    <option value="crawley">Crawley</option>
+    <option value="darlington">Darlington</option>
+    <option value="doncaster">Doncaster</option>
+    <option value="dover">Dover</option>
+    <option value="durham">Durham</option>
+    <option value="eastbourne">Eastbourne</option>
+    <option value="exeter">Exeter</option>
+    <option value="gloucester">Gloucester</option>
+    <option value="guildford">Guildford</option>
+    <option value="harrogate">Harrogate</option>
+    <option value="hastings">Hastings</option>
+    <option value="hereford">Hereford</option>
+    <option value="ipswich">Ipswich</option>
+    <option value="lancaster">Lancaster</option>
+    <option value="lincoln">Lincoln</option>
+    <option value="middlesbrough">Middlesbrough</option>
+    <option value="newport">Newport (Isle of Wight)</option>
+    <option value="oldham">Oldham</option>
+    <option value="preston">Preston</option>
+    <option value="rochester">Rochester</option>
+    <option value="rotherham">Rotherham</option>
+    <option value="rugby">Rugby</option>
+    <option value="salford">Salford</option>
+    <option value="salisbury">Salisbury</option>
+    <option value="scunthorpe">Scunthorpe</option>
+    <option value="shrewsbury">Shrewsbury</option>
+    <option value="slough">Slough</option>
+    <option value="st-albans">St Albans</option>
+    <option value="stockport">Stockport</option>
+    <option value="stourbridge">Stourbridge</option>
+    <option value="stratford-upon-avon">Stratford-upon-Avon</option>
+    <option value="sunderland">Sunderland</option>
+    <option value="telford">Telford</option>
+    <option value="wakefield">Wakefield</option>
+    <option value="wallasey">Wallasey</option>
+    <option value="walsall">Walsall</option>
+    <option value="warwick">Warwick</option>
+    <option value="wigan">Wigan</option>
+    <option value="winchester">Winchester</option>
+    <option value="wolverhampton">Wolverhampton</option>
+    <option value="worcester">Worcester</option>
+    <option value="worthing">Worthing</option>
+  </optgroup>
+
+  <optgroup label="Scotland">
+    <option value="glasgow">Glasgow</option>
+    <option value="edinburgh">Edinburgh</option>
+    <option value="aberdeen">Aberdeen</option>
+    <option value="dundee">Dundee</option>
+    <option value="inverness">Inverness</option>
+    <option value="stirling">Stirling</option>
+    <option value="perth">Perth</option>
+    <option value="ayr">Ayr</option>
+    <option value="dumfries">Dumfries</option>
+    <option value="falkirk">Falkirk</option>
+    <option value="greenock">Greenock</option>
+    <option value="kilmarnock">Kilmarnock</option>
+    <option value="paisley">Paisley</option>
+  </optgroup>
+
+  <optgroup label="Wales">
+    <option value="cardiff">Cardiff</option>
+    <option value="swansea">Swansea</option>
+    <option value="newport">Newport</option>
+    <option value="bangor">Bangor</option>
+    <option value="wrexham">Wrexham</option>
+    <option value="st-asaph">St Asaph</option>
+    <option value="st-davids">St Davids</option>
+  </optgroup>
+
+  <optgroup label="Northern Ireland">
+    <option value="belfast">Belfast</option>
+    <option value="derry">Derry</option>
+    <option value="lisburn">Lisburn</option>
+    <option value="newry">Newry</option>
+  </optgroup>
+
+  <optgroup label="Crown Dependencies">
+    <option value="douglas">Douglas (Isle of Man)</option>
+    <option value="st-helier">St Helier (Jersey)</option>
+    <option value="st-peter-port">St Peter Port (Guernsey)</option>
+  </optgroup>
+
+  <optgroup label="International">
+    <option value="new-york">New York</option>
+    <option value="toronto">Toronto</option>
+    <option value="sydney">Sydney</option>
+  </optgroup>
+</select>
           </div>
         </div>
 

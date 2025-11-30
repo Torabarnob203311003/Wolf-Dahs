@@ -208,7 +208,7 @@ const ManageRaffleCards = () => {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="text-green-400 text-sm font-semibold">${card.prizeAmount}</span>
+                        <span className="text-green-400 text-sm font-semibold">£{card.prizeAmount}</span>
                       </td>
                       <td className="py-3 px-4">
                         <span className="text-white text-sm">{card.totalTicketLimit.toLocaleString()}</span>

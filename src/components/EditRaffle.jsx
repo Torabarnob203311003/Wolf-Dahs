@@ -290,7 +290,7 @@ const EditRaffleCard = ({ onBack = () => { } }) => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Ticket Price ($)</label>
+                        <label className="block text-sm font-medium mb-2">Ticket Price (£)</label>
                         <input
                             type="number"
                             name="amount"

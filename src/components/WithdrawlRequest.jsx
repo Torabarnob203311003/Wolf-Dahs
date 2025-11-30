@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Loader2, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, DollarSign, Clock, CheckCircle, XCircle, PoundSterling } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 import toast from 'react-hot-toast';
 
@@ -166,7 +166,7 @@ const WithdrawalRequest = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-[#161616] rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition">
             <div className="flex items-center gap-3 mb-2">
-              <DollarSign className="text-gray-400" size={20} />
+              <PoundSterling className="text-gray-400" size={20} />
               <p className="text-gray-400 text-sm">Total Requests</p>
             </div>
             <p className="text-2xl font-bold">{stats.totalRequests}</p>
@@ -266,7 +266,7 @@ const WithdrawalRequest = () => {
           {/* Empty state */}
           {paginatedRequests.length === 0 && (
             <div className="text-center py-10 text-gray-400">
-              <DollarSign className="mx-auto mb-3 text-gray-600" size={48} />
+              <PoundSterling className="mx-auto mb-3 text-gray-600" size={48} />
               <p>No withdrawal requests found for this filter.</p>
             </div>
           )}
