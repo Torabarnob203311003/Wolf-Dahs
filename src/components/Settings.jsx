@@ -461,12 +461,36 @@ function BasicProfileSection({ userId }) {
               className="w-full bg-[#121212] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             >
               <option value="">Select Your Province</option>
-              <option value="california">California</option>
-              <option value="ontario">Ontario</option>
-              <option value="new-south-wales">New South Wales</option>
-            </select>
-          </div>
 
+              {/* England */}
+              <option value="london">London</option>
+              <option value="greater-manchester">Greater Manchester</option>
+              <option value="west-midlands">West Midlands</option>
+              <option value="merseyside">Merseyside</option>
+              <option value="south-yorkshire">South Yorkshire</option>
+              <option value="west-yorkshire">West Yorkshire</option>
+              <option value="kent">Kent</option>
+              <option value="essex">Essex</option>
+              <option value="surrey">Surrey</option>
+              <option value="hampshire">Hampshire</option>
+
+              {/* Scotland */}
+              <option value="glasgow">Glasgow</option>
+              <option value="edinburgh">Edinburgh</option>
+              <option value="aberdeen">Aberdeen</option>
+              <option value="dundee">Dundee</option>
+
+              {/* Wales */}
+              <option value="cardiff">Cardiff</option>
+              <option value="swansea">Swansea</option>
+              <option value="newport">Newport</option>
+
+              {/* Northern Ireland */}
+              <option value="belfast">Belfast</option>
+              <option value="derry">Derry</option>
+              <option value="lisburn">Lisburn</option>
+              </select>
+            </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Gender</label>
             <select

@@ -193,9 +193,9 @@ const WinnerHistory = () => {
                                                 <div className="flex items-center gap-2">
                                                     <Ticket className="text-green-400" size={16} />
                                                     <div>
-                                                        <p className="text-white text-sm font-medium">
+                                                        {/* <p className="text-white text-sm font-medium">
                                                             #{winner.winningTicketId?.ticketNumber || 'N/A'}
-                                                        </p>
+                                                        </p> */}
                                                         <p className="text-gray-500 text-xs">
                                                             {winner.raffleId?.ticketSold || 0}/{winner.raffleId?.totalTicket || 0} sold
                                                         </p>

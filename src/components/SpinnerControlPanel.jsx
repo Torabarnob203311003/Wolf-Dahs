@@ -124,7 +124,7 @@ const SpinnerControlPanel = () => {
                     <tr className="border-b border-gray-800">
                       <th className="text-gray-400 text-left py-3 px-3 font-medium text-xs">COLOR</th>
                       <th className="text-gray-400 text-left py-3 px-3 font-medium text-xs">LABEL</th>
-                      <th className="text-gray-400 text-left py-3 px-3 font-medium text-xs">VALUE ($)</th>
+                      <th className="text-gray-400 text-left py-3 px-3 font-medium text-xs">VALUE (£)</th>
                       <th className="text-gray-400 text-left py-3 px-3 font-medium text-xs">PROBABILITY (%)</th>
                       {/* <th className="text-gray-400 text-left py-3 px-3 font-medium text-xs">ACTIONS</th> */}
                     </tr>
@@ -145,10 +145,11 @@ const SpinnerControlPanel = () => {
                           <input
                             type="text"
                             value={prize.label}
+                            disabled={prize.label === 'JACKPOT'}
                             onChange={(e) => handlePrizeChange(prize.id, 'label', e.target.value)}
-                            className="bg-[#0f0f0f] text-white text-sm px-3 py-1.5 rounded border border-gray-700 focus:border-blue-500 focus:outline-none w-28"
+                            className={`bg-[#0f0f0f] text-white text-sm px-3 py-1.5 rounded border border-gray-700 focus:border-blue-500 focus:outline-none w-28 ${prize.label === 'JACKPOT'? 'cursor-not-allowed': ''}`}
                           />
-                        </td>
+                          </td>
                         <td className="py-3 px-3">
                           <input
                             type="number"

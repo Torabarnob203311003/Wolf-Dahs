@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, Ticket, Package, Trophy, DollarSign, Loader2, Activity, TrendingUp, Zap, Clock  } from 'lucide-react';
+import { Users, Ticket, Package, Trophy, DollarSign, Loader2, Activity, TrendingUp, Zap, Clock, PoundSterling  } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import axiosSecure from '../lib/axiosSecure';
 
@@ -402,7 +402,7 @@ function Dashboard() {
     {
       title: 'Total Earning',
       value: metricData?.totalEarnings,
-      icon: DollarSign,
+      icon: PoundSterling,
       bgColor: 'bg-green-500'
     }
   ];
