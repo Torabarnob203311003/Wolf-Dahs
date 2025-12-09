@@ -59,11 +59,8 @@ export const AuthProvider = ({ children }) => {
         
         const { jwtToken, user } = data
         
-        if(user.role !== 'admin' || user.role !== 'superadmin') {
-            throw new Error('Unauthorized role')
-        }
-
-        // Save token
+        if(user.role === 'admin' || user.role === 'superadmin') {
+            // Save token
         localStorage.setItem('token', jwtToken)
         
         // Set header for BOTH axios instances
@@ -74,6 +71,11 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true)
         
         return true
+        }else{
+            throw new Error('Unauthorized role');
+        }
+
+        
     } catch (error) {
         console.error('❌ Login failed:', error);
         return false
