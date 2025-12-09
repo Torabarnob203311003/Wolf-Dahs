@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
                 axiosSecure.defaults.headers.common['Authorization'] = `Bearer ${token}`
                 
                 const res = await axiosSecure.get('/users/me')
+                console.log(res);
                 
                 if (res.data.data) {
                     setUser(res.data.data)
@@ -58,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         
         const { jwtToken, user } = data
         
-        if(user.role !== 'admin') {
+        if(user.role !== 'admin' && user.role !== 'superadmin') {
             throw new Error('Unauthorized role')
         }
 

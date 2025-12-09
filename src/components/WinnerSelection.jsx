@@ -1,8 +1,7 @@
-
-
 import { useState, useEffect } from 'react';
-import { Search, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowLeft, Megaphone } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
+import AnnounceWinner from './AnnounceWinner';
 
 const WinnerSelection = () => {
     const [raffleId, setRaffleId] = useState('');
@@ -12,6 +11,7 @@ const WinnerSelection = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isAnnounceOpen, setIsAnnounceOpen] = useState(false);
 
     const itemsPerPage = 5;
 
@@ -102,16 +102,14 @@ const WinnerSelection = () => {
     const progressPercentage = (ticketsSold / totalTickets) * 100;
     const allTicketsSold = ticketsSold >= totalTickets;
 
-    // Random Winner Button: Only enabled when status is true AND all tickets sold
     const canSelectRandomWinner = raffle?.status === true && allTicketsSold;
 
-    // Manual Select Winner Button: Enabled when status is true (regardless of tickets sold)
     const canSelectManualWinner = raffle?.status === true;
 
     return (
         <div className="min-h-screen text-white p-3">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-4">
                 <div>
                     <div className="flex items-center gap-2 text-gray-400 mb-2">
                         <span>Winner Selection Management</span>
@@ -130,6 +128,18 @@ const WinnerSelection = () => {
                     <ArrowLeft size={18} />
                     Back
                 </button>
+            </div>
+
+            <div className='my-4  flex justify-end'>
+                <button
+                    onClick={() => setIsAnnounceOpen(!isAnnounceOpen)}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded flex items-center gap-2 transition font-semibold"
+                >
+                    <Megaphone size={18} /> 
+                    Announce Winner
+                </button>
+                {isAnnounceOpen && <AnnounceWinner isOpen={isAnnounceOpen} onClose={() => setIsAnnounceOpen(false)} />}
+                {/* <AnnounceWinner isOpen={isAnnounceOpen} onClose={() => setIsAnnounceOpen(false)} /> */}
             </div>
 
             {/* Ticket Sales Progress Section */}

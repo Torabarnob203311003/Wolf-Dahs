@@ -18,6 +18,7 @@ import SpinnerControlPanel from "./components/SpinnerControlPanel";
 import SpinningHistoryPage from "./components/SpinningHistoryPage";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
 import WithdrawlRequest from './components/WithdrawlRequest';
+import ManageAdmins from "./components/ManageAdmins";
 
 function App() {
   return (
@@ -44,8 +45,8 @@ function App() {
             <Route path="payments" element={<Winner />} />
             <Route path="insights" element={<Insights />} />
             <Route path="settings" element={<Settings />} />
-           <Route path="withdraw-request" element={<WithdrawlRequest />} />
-
+            <Route path="withdraw-request" element={<WithdrawlRequest />} />
+            <Route path="manage-admin" element={<ManageAdmins />} />
 
             <Route path="*" element={
               <div className="flex items-center justify-center min-h-screen bg-black text-white">
