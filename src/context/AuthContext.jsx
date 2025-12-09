@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         
         const { jwtToken, user } = data
         
-        if(user.role !== 'admin' && user.role !== 'superadmin') {
+        if(user.role !== 'admin' || user.role !== 'superadmin') {
             throw new Error('Unauthorized role')
         }
 
