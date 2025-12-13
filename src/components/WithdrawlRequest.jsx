@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Loader2, DollarSign, Clock, CheckCircle, XCircle, PoundSterling } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 const WithdrawalRequest = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -116,10 +117,11 @@ const WithdrawalRequest = () => {
   const handleAction = async (requestId, action) => {
     try {
       setActionLoading(true);
+      console.log("from handle action", selectedRequest._id);
       
       const endpoint = action === 'Approve' 
         ? `/withdrawal/${requestId}/approve` 
-        : `/withdrawal/${requestId}/reject`;
+        : `/withdrawal/${requestId}/reject/${selectedRequest.userId}`;
       
       const response = await axiosSecure.patch(endpoint);
       
@@ -230,7 +232,7 @@ const WithdrawalRequest = () => {
                     </td>
                     <td className="py-4 px-6">
                       <div>
-                        <p className="font-bold text-[#FACC15]">${request.rewardPoint || request.amount}</p>
+                        <p className="font-bold text-[#FACC15]">£{request.rewardPoint || request.amount}</p>
                         {/* <p className="text-sm text-gray-400">{(request.amount || 0).toLocaleString()} pts</p> */}
                       </div>
                     </td>

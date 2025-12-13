@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, ChevronLeft, ChevronRight, ArrowLeft, Megaphone } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowLeft, Megaphone, Download } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
 import AnnounceWinner from './AnnounceWinner';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const WinnerSelection = () => {
     const [raffleId, setRaffleId] = useState('');
@@ -86,6 +88,102 @@ const WinnerSelection = () => {
             alert(err.response?.data?.message || 'Failed to select random winner');
         }
     }
+
+    const handleDownloadInvoice = async (userId) => {
+    try {
+        // 1️⃣ Fetch invoice data from your backend
+        const res = await axiosSecure.get(
+            `/ticket/get-invoice-info?userId=${userId}&raffleId=${raffleId}`,);
+
+        if (!res.data.success) return;
+
+        const data = res.data.data;
+
+        // 2️⃣ PDF BASE SETUP
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+
+        const invoiceId = "INV-" + Math.floor(Math.random() * 999999);
+        const date = new Date().toLocaleDateString();
+
+        // ================= HEADER =================
+        doc.setFillColor(30, 40, 120);
+        doc.rect(0, 0, pageWidth, 40, "F");
+
+        doc.setTextColor(255, 215, 0);
+        doc.setFontSize(22);
+        doc.text("Wolf Pack Invoice", 14, 26);
+
+        // ================= INVOICE BOX =================
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(10, 50, pageWidth - 20, 40, 3, 3, "F");
+
+        doc.setFontSize(12);
+        doc.setTextColor(0);
+        doc.text(`Invoice ID: ${invoiceId}`, 15, 63);
+        doc.text(`Date: ${date}`, 15, 72);
+
+        // ================= USER BOX =================
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(10, 100, pageWidth - 20, 55, 3, 3, "F");
+
+        doc.text(`Customer Name: ${data.name}`, 15, 118);
+        doc.text(`Email: ${data.email}`, 15, 126);
+        doc.text(`User ID: ${data.userId}`, 15, 134);
+
+        // ================= RAFFLE BOX =================
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(10, 165, pageWidth - 20, 30, 3, 3, "F");
+
+        doc.text(`Raffle: ${data.raffleTitle}`, 15, 183);
+
+        // ================= TICKETS TABLE =================
+        autoTable(doc, {
+            startY: 205,
+            headStyles: {
+                fillColor: [30, 40, 120],
+                textColor: [255, 215, 0],
+                fontSize: 12,
+                halign: "center",
+            },
+            bodyStyles: {
+                fontSize: 11,
+            },
+            head: [["Ticket Number", "Price (£)"]],
+            body: data.tickets.map((t) => [
+                t._id,
+                "£10"
+            ]),
+        });
+
+        const finalY = doc.lastAutoTable.finalY;
+
+        // ================= TOTAL =================
+        const total = data.tickets.length * 10;
+
+        doc.setFillColor(255, 215, 0, 20);
+        doc.roundedRect(10, finalY + 10, pageWidth - 20, 20, 3, 3, "F");
+
+        doc.setFontSize(14);
+        doc.setTextColor(120);
+        doc.text(`Total: £${total}`, 15, finalY + 24);
+
+        // ================= FOOTER =================
+        doc.setFontSize(10);
+        doc.setTextColor(120);
+        // doc.text(
+        //     "Thank you for participating! This is an automated invoice.",
+        //     14,
+        //     doc.internal.pageSize.height - 20
+        // );
+
+        // ================= DOWNLOAD =================
+        doc.save(`${invoiceId}.pdf`);
+
+    } catch (err) {
+        console.log(err);
+    }
+    };
 
     const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -269,8 +367,9 @@ const WinnerSelection = () => {
                                     <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Name</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Email</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Tickets</th>
-                                    <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Ticket ID</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">User ID</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Actions</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-300 text-sm">Download Invoice</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -284,7 +383,7 @@ const WinnerSelection = () => {
                                                 {user.tracks} tickets
                                             </span>
                                         </td>
-                                        <td className="py-4 px-6 text-gray-300 text-sm font-mono">{user.ticketId}</td>
+                                        <td className="py-4 px-6 text-gray-300 text-sm font-mono">{user.id}</td>
                                         <td className="py-4 px-6">
                                             <button
                                                 onClick={() => {
@@ -304,6 +403,16 @@ const WinnerSelection = () => {
                                                 }
                                             >
                                                 Select Winner
+                                            </button>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                onClick={() => handleDownloadInvoice(user.id)}
+                                                className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
+                                            >
+                                                <Download size={16} />
+                                                Download Invoice
                                             </button>
                                         </td>
                                     </tr>

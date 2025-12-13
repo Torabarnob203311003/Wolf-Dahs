@@ -90,7 +90,7 @@ const WinnerHistory = () => {
                     <h2 className="text-lg font-medium text-white">
                         All Winners ({filteredWinners.length})
                     </h2>
-                    <div className="relative">
+                    {/* <div className="relative">
                         <input
                             type="text"
                             placeholder="Search by username, email, or raffle..."
@@ -102,7 +102,7 @@ const WinnerHistory = () => {
                             className="bg-[#2a2a2a] border border-gray-700 rounded-lg px-4 py-2 pl-10 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 w-80"
                         />
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Loading State */}
@@ -182,12 +182,12 @@ const WinnerHistory = () => {
                                                 <div className="flex items-center gap-2">
                                                     <User className="text-blue-400" size={16} />
                                                     <span className="text-white text-sm">
-                                                        {winner.userId?.userName || 'N/A'}
+                                                        {winner.userId?.userName || winner?.name || 'N/A'}
                                                     </span>
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6 text-gray-300 text-sm">
-                                                {winner.userId?.email || 'N/A'}
+                                                {winner.userId?.email || winner?.email || 'N/A'}
                                             </td>
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center gap-2">

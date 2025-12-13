@@ -35,10 +35,10 @@ function Layout() {
         'Authorization': `Bearer ${token}`,
       }
     });
-    console.log(data);
+    // console.log(data);
     setNotifications([]);
   }
-  console.log(user);
+  // console.log(user);
   
   useEffect(()=>{
     fetchNotifications();
