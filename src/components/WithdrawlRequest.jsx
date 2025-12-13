@@ -368,8 +368,8 @@ const WithdrawalRequest = () => {
                     <span className="font-bold">{(selectedRequest.rewardPoint || 0).toLocaleString()} pts</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">USD Value:</span>
-                    <span className="font-bold text-[#FACC15]">${selectedRequest.rewardPoint || selectedRequest.amount}</span>
+                    <span className="text-gray-400">Total Value:</span>
+                    <span className="font-bold text-[#FACC15]">£{selectedRequest.rewardPoint || selectedRequest.amount}</span>
                   </div>
                 </div>
               </div>
