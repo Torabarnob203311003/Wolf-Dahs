@@ -39,9 +39,9 @@ const WithdrawalRequest = () => {
   const filterOptions = useMemo(() => [
     { value: 'all', label: 'All Requests', count: withdrawalRequests.length },
     { value: 'pending', label: 'Pending', count: withdrawalRequests.filter(r => r.status === 'pending').length },
-    { value: 'processing', label: 'Processing', count: withdrawalRequests.filter(r => r.status === 'processing').length },
+    // { value: 'processing', label: 'Processing', count: withdrawalRequests.filter(r => r.status === 'processing').length },
     { value: 'completed', label: 'Approved', count: withdrawalRequests.filter(r => r.status === 'completed').length },
-    { value: 'rejected', label: 'Rejected', count: withdrawalRequests.filter(r => r.status === 'rejected').length },
+    { value: 'cancelled', label: 'Rejected', count: withdrawalRequests.filter(r => r.status === 'cancelled').length },
   ], [withdrawalRequests]);
 
   // Compute filtered data
@@ -101,7 +101,7 @@ const WithdrawalRequest = () => {
 
   const getMethodIcon = (method) => {
     const methodLower = method?.toLowerCase() || '';
-    if (methodLower.includes('paypal')) return '💳';
+    if (methodLower.includes('debit-card')) return '💳';
     if (methodLower.includes('bank')) return '🏦';
     if (methodLower.includes('crypto')) return '₿';
     return '💰';
@@ -380,10 +380,35 @@ const WithdrawalRequest = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{getMethodIcon(selectedRequest.payoutMethod)}</span>
-                    <div>
-                      <p className="font-medium">{selectedRequest.payoutMethod || 'N/A'}</p>
-                      <p className="text-sm text-gray-400 break-all">{selectedRequest.payoutDetails.emailOrAccountId || 'No details provided'}</p>
-                    </div>
+                    {/* stripe connect */}
+                    {selectedRequest.payoutMethod === 'stripe-connect' && (
+                      <div>
+                      <p className="font-medium">{selectedRequest.payoutMethod.toUpperCase() || 'N/A'}</p>
+                      <p className="text-sm text-gray-400 break-all">{selectedRequest.payoutDetails?.emailOrAccountId || 'No details provided'}</p>
+                    </div>  
+                    )}
+
+                    {/* Bank payment details */}
+                    {selectedRequest.payoutMethod === 'bank-transfer' && (
+                      <div>
+                        <p className="font-medium">{selectedRequest.payoutMethod.toUpperCase() || 'N/A'}</p>
+                        <p className="text-sm text-gray-400 break-all">Full Name: {selectedRequest.payoutDetails?.fullName || 'No Name Provided'}</p>
+                        <p className="text-sm text-gray-400 break-all">Account Number: {selectedRequest.payoutDetails?.accountNumber || 'No Account Number Provided'}</p>
+                        <p className="text-sm text-gray-400 break-all">Routing Info: {selectedRequest.payoutDetails?.routingInfo || 'No Routing Information Provided'}</p>
+                        <p className="text-sm text-gray-400 break-all">Bank Name: {selectedRequest.payoutDetails?.bankName || 'No Bank Name Provided'}</p>
+                        <p className="text-sm text-gray-400 break-all">Country: {selectedRequest.payoutDetails?.country || 'No Country Name Provided'}</p>
+                      </div>
+                    )}
+                    
+                    {/* Debit Card */}
+                    {selectedRequest.payoutMethod === 'debit-card' && (
+                      <div>
+                        <p className="font-medium">{selectedRequest.payoutMethod.toUpperCase() || 'N/A'}</p>
+                        <p className="text-sm text-gray-400 break-all">Full Name: {selectedRequest.payoutDetails?.cardNumber || 'No Card Number Provided'}</p>
+                        <p className="text-sm text-gray-400 break-all">Account Number: {selectedRequest.payoutDetails?.expiryDate || 'No Expiry Date Provided'}</p>
+                        <p className="text-sm text-gray-400 break-all">Routing Info: {selectedRequest.payoutDetails?.cardholderName || 'No Cardholder Name Provided'}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

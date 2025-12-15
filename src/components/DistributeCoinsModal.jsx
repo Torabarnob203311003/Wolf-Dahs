@@ -18,7 +18,7 @@ const DistributeCoinsModal = ({ isOpen, onClose, onSuccess }) => {
   const fetchUsers = async (page = 1, search = '') => {
     try {
       setLoading(true);
-      const response = await axiosSecure.get('/users/get-all-users');
+      const response = await axiosSecure.get(`/users/get-all-users?page=${page}&searchTerm=${search}`);
 
       if (response.data.success) {
         setUsers(response.data.data);
@@ -178,7 +178,7 @@ const DistributeCoinsModal = ({ isOpen, onClose, onSuccess }) => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
               <input
                 type="text"
-                placeholder="Search by name, email, or phone..."
+                placeholder="Search by name, email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-black text-white pl-11 pr-4 py-3 rounded-lg border border-gray-700 focus:border-yellow-500 focus:outline-none"
