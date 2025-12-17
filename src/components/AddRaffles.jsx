@@ -4,7 +4,7 @@ import axiosSecure from '../lib/axiosSecure';
 import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
 
-// Jodit Editor Configuration - SIMPLIFIED
+// Jodit Editor Configuration
 const editorConfig = {
     readonly: false,
     height: 400,
@@ -40,6 +40,7 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
         imageFile: null,
         title: '',
         amount: '',
+        priceValue: '',
         ticketLimit: '',
         userTicketLimit: '',
         details: ''
@@ -93,6 +94,11 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
             setError('Please enter a valid amount');
             return false;
         }
+        console.log(formData.priceValue);
+        if(!formData.priceValue || parseFloat(formData.priceValue) <= 0){
+            setError('Please enter a valid price value.');
+            return false;
+        }
         if (!formData.ticketLimit) {
             setError('Please select a ticket limit');
             return false;
@@ -116,9 +122,11 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
             const formDataToSend = new FormData();
             formDataToSend.append('title', formData.title);
             formDataToSend.append('amount', formData.amount);
+            formDataToSend.append('priceValue', Number(formData.priceValue));
             formDataToSend.append('ticketLimit', formData.ticketLimit);
             formDataToSend.append('userTicketLimit', formData.userTicketLimit);
             formDataToSend.append('details', formData.details);
+            
             if (formData.imageFile) {
                 formDataToSend.append('image', formData.imageFile);
             }
@@ -130,6 +138,7 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
                 imageFile: null,
                 title: '',
                 amount: '',
+                priceValue: '',
                 ticketLimit: '',
                 userTicketLimit: '',
                 details: ''
@@ -171,6 +180,7 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
             const formDataToSend = new FormData();
             formDataToSend.append('title', formDataFromComponent.get('title'));
             formDataToSend.append('price', formDataFromComponent.get('amount'));
+              formDataToSend.append('priceValue', formDataFromComponent.get('priceValue'));
             formDataToSend.append('totalTicket', formDataFromComponent.get('ticketLimit'));
             formDataToSend.append("perUserTicketLimit", formDataFromComponent.get('userTicketLimit'));
             formDataToSend.append('details', formDataFromComponent.get('details'));
@@ -274,33 +284,47 @@ const AddRaffleCard = ({ onBack = () => { } }) => {
                     </div>
                 </div>
 
-                {/* Title and Amount */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Title, price value and Amount */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div>
                         <label className="block text-sm font-medium mb-2">Title</label>
                         <input
                             type="text"
                             name="title"
-                            placeholder="Enter Card title"
+                            placeholder='Raffle Title'
                             value={formData.title}
                             onChange={handleInputChange}
-                            className="w-full bg-[#121212] border border-gray-600 rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                            className="w-full bg-[#121212] border border-gray-600 rounded px-4 py-2 text-white"
                         />
                     </div>
+
                     <div>
-                        <label className="block text-sm font-medium mb-2">Per Card Price ($)</label>
+                        <label className="block text-sm font-medium mb-2">Per Card Price (£)</label>
                         <input
                             type="number"
                             name="amount"
-                            placeholder="Enter card price"
+                            placeholder="Enter per card price"
                             value={formData.amount}
                             onChange={handleInputChange}
-                            step="0.01"
+                            className="w-full bg-[#121212] border border-gray-600 rounded px-4 py-2 text-white"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Price Value (£)</label>
+                        <input
+                            type="number"
+                            name="priceValue"
+                            placeholder="Enter winning price value"
+                            value={formData.priceValue}
+                            onChange={handleInputChange}
                             min="0"
-                            className="w-full bg-[#121212] border border-gray-600 rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
+                            step="0.01"
+                            className="w-full bg-[#121212] border border-gray-600 rounded px-4 py-2 text-white"
                         />
                     </div>
                 </div>
+
 
                 {/* Ticket Limits */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
