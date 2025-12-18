@@ -40,6 +40,7 @@ const fetchUsers = async (page = 1) => {
         id: user._id,
         name: user.userName,
         email: user.email,
+        age: user.age,
         tracks: 0,
         ticketId: user._id,
         status: user.isVerified ? 'Confirmed' : 'Pending',
@@ -222,6 +223,7 @@ const handleUnverify = async (user) => {
                     <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">No</th>
                     <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">Name</th>
                     <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">Email</th>
+                    <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">Age</th>
                     <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">User ID</th>
                     <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">Status</th>
                     <th className="text-left py-4 px-6 text-gray-400 text-xs uppercase">Actions</th>
@@ -247,6 +249,7 @@ const handleUnverify = async (user) => {
                         </td>
 
                         <td className="py-4 px-6 text-gray-400">{user.email}</td>
+                        <td className="py-4 px-6 text-gray-400">{user.age ? user.age : 'N/A'}</td>
                         <td className="py-4 px-6 text-gray-400 font-mono">{user.ticketId}</td>
 
                         <td className="py-4 px-6">

@@ -86,7 +86,9 @@ const SpinnerControlPanel = () => {
   //   if (confirm('Reset to default values?')) setPrizes(defaultPrizes);
   // };
 
-  if (loading) return <div className="text-white p-10">Loading spinner data...</div>;
+  if (loading) return <div className="flex justify-center items-center min-h-screen">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        </div>;
 
   const totalProbability = prizes.reduce((sum, p) => sum + p.probability, 0);
 

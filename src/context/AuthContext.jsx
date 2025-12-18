@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }) => {
                 axiosSecure.defaults.headers.common['Authorization'] = `Bearer ${token}`
                 
                 const res = await axiosSecure.get('/users/me')
-                console.log(res);
                 
                 if (res.data.data) {
                     setUser(res.data.data)
