@@ -19,6 +19,7 @@ import SpinningHistoryPage from "./components/SpinningHistoryPage";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
 import WithdrawlRequest from './components/WithdrawlRequest';
 import ManageAdmins from "./components/ManageAdmins";
+import CheckCredit from "./components/CheckCredit";
 
 function App() {
   return (
@@ -47,6 +48,8 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="withdraw-request" element={<WithdrawlRequest />} />
             <Route path="manage-admin" element={<ManageAdmins />} />
+            <Route path="manage-user-credit" element={<CheckCredit />} />
+        
 
             <Route path="*" element={
               <div className="flex items-center justify-center min-h-screen bg-black text-white">

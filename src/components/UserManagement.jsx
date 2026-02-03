@@ -5,6 +5,7 @@ import { ScaleLoader } from "react-spinners";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import toast from "react-hot-toast";
 import DistributeCoinsModal from "./DistributeCoinsModal";
+import { NavLink } from "react-router-dom";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -173,6 +174,11 @@ const handleUnverify = async (user) => {
           <p className="text-gray-400 text-sm">View and manage all registered users</p>
         </div>
         
+
+
+        <NavLink to={'/manage-user-credit'} className="font-semibold px-3 py-3 text-xs rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black transition">
+          Manage User Credits
+        </NavLink>
         {/* DISTRIBUTE */}
         <button  className="font-semibold px-3 py-3 text-xs rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black transition" onClick={() => setShowModal(true)}>
           Distribute Coins
