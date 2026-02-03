@@ -136,7 +136,7 @@ const WithdrawalRequest = () => {
       }
     } catch (error) {
       console.error(`Error ${action.toLowerCase()}ing request:`, error);
-      alert(`Failed to ${action.toLowerCase()} request. Please try again.`);
+      toast.error(`Failed to ${action.toLowerCase()} request. Please try again.`);
     } finally {
       setActionLoading(false);
     }

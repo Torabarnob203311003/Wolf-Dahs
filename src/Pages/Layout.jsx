@@ -1,9 +1,9 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel, BanknoteArrowUp, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Users, Ticket, Settings, HistoryIcon, Power, LoaderPinwheel, BanknoteArrowUp, ShieldCheck, UserStar } from 'lucide-react';
 import { Bell, ChevronDown, User, LogOut } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
-import axiosSecure from '../../lib/axiosSecure';
+import axiosSecure from '../lib/axiosSecure';
 import { Toaster } from 'react-hot-toast';
 
 function Layout() {
@@ -30,15 +30,14 @@ function Layout() {
   };
   
   const clearNotifications = async () =>{
+    // eslint-disable-next-line no-unused-vars
     const {data } = await axiosSecure.delete('/notifications/cleanup', {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
     });
-    // console.log(data);
     setNotifications([]);
   }
-  // console.log(user);
   
   useEffect(()=>{
     fetchNotifications();
@@ -103,6 +102,7 @@ function Layout() {
             Spinning History 
           </NavLink>
 
+
           <NavLink to="/users" className={({ isActive }) =>
             `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
               ? 'bg-[#E28B27] text-white'
@@ -112,7 +112,16 @@ function Layout() {
             <Users className="w-5 h-5" />
             Users Management
           </NavLink>
-
+         
+          <NavLink to="/manage-sponsor" className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-colors ${isActive
+              ? 'bg-[#E28B27] text-white'
+              : 'text-[#E3E6EA] hover:bg-[#E28B27] hover:text-white'
+            }`
+          }>
+            <UserStar className="w-5 h-5" />
+            Sponsors Management
+          </NavLink>
 
 
           <NavLink to="/manage-admin" className={({ isActive }) =>

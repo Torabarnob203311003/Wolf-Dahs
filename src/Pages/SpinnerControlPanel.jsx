@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, Save, RotateCcw } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
+import toast from 'react-hot-toast';
 
 const SpinnerControlPanel = () => {
   const [prizes, setPrizes] = useState([]);
@@ -62,7 +63,7 @@ const SpinnerControlPanel = () => {
   const handleSave = async () => {
     const totalProbability = prizes.reduce((sum, p) => sum + p.probability, 0);
     if (Math.abs(totalProbability - 100) > 0.1) {
-      alert('⚠️ Total probability must equal 100%');
+      toast.error('⚠️ Total probability must equal 100%');
       return;
     }
 
@@ -75,10 +76,10 @@ const SpinnerControlPanel = () => {
         const res = await axiosSecure.post('/spinner/create-spinner', { prizes, jackpotSettings });
         setSpinnerId(res.data._id);
       }
-      alert('✅ Settings saved successfully!');
+      toast.success('✅ Settings saved successfully!');
     } catch (err) {
       console.error('Error saving spinner settings:', err);
-      alert('❌ Failed to save settings.');
+      toast.error('❌ Failed to save settings.');
     }
   };
 

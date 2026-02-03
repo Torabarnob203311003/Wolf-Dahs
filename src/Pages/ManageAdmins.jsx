@@ -132,47 +132,7 @@ const ManageAdmins = () => {
     } finally {
       setActionLoading(false);
     }
-    
-    // // Demo: Toggle block state
-    // setAdmins(prev => prev.map(a => 
-    //   a._id === adminId ? { ...a, isBlocked: !a.isBlocked } : a
-    // ));
   };
-
-  // TODO: API IMPLEMENTATION - Delete admin (Super Admin Only)
-//   const handleDeleteAdmin = async (adminId) => {
-//     if (!isSuperAdmin) {
-//       toast.error('Only Super Admins can delete administrators');
-//       return;
-//     }
-    
-//     if (!confirm('Are you sure you want to delete this admin?')) return;
-    
-//     // try {
-//     //   setActionLoading(true);
-//     //   const response = await axiosSecure.delete(`/admin/${adminId}`);
-//     //   if (response.data.success) {
-//     //     await fetchAdmins();
-//     //     alert('Admin deleted successfully');
-//     //   }
-//     // } catch (error) {
-//     //   console.error('Error deleting admin:', error);
-//     //   alert('Failed to delete admin');
-//     // } finally {
-//     //   setActionLoading(false);
-//     // }
-
-//     // Demo: Remove from list
-//     setAdmins(prev => prev.filter(a => a._id !== adminId));
-//   };
-
-//   const formatDate = (dateString) => {
-//     return new Date(dateString).toLocaleDateString('en-GB', {
-//       day: 'numeric',
-//       month: 'short',
-//       year: 'numeric'
-//     });
-//   };
 
   if (loading) {
     return (

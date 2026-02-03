@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import logo from '../assets/logo.png';
+import toast from "react-hot-toast";
 
 function Register() {
     const [showPassword, setShowPassword] = useState(false);
@@ -52,7 +53,7 @@ function Register() {
 
         if (Object.keys(newErrors).length === 0) {
             console.log("Register data:", formData);
-            alert("Registration successful!");
+            toast.success("Registration successful!");
         } else {
             setErrors(newErrors);
         }

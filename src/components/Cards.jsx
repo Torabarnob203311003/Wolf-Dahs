@@ -3,6 +3,7 @@ import { Search, Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-re
 import axiosSecure from '../lib/axiosSecure';
 import { ClipLoader, ScaleLoader } from "react-spinners";
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import toast from 'react-hot-toast';
 
 const ManageRaffleCards = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,10 +45,10 @@ const ManageRaffleCards = () => {
       setShowDeleteModal(false);
       setCardToDelete(null);
 
-      alert('Card deleted successfully!');
+      toast.success('Card deleted successfully!');
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('Failed to delete card. Please try again.');
+      toast.error('Failed to delete card. Please try again.');
     } finally {
       setIsDeleting(false);
     }

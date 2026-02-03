@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import { Search, Trash2, ChevronLeft, ChevronRight, CheckCircle, XCircle } from 'lucide-react';
 import axiosSecure from "../lib/axiosSecure";
 import { ScaleLoader } from "react-spinners";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import toast from "react-hot-toast";
-import DistributeCoinsModal from "./DistributeCoinsModal";
 import { NavLink } from "react-router-dom";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import DistributeCoinsModal from "../components/DistributeCoinsModal";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,7 +23,6 @@ function UserManagement() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [verifyingId, setVerifyingId] = useState(null);
 
   const itemsPerPage = 10;
 
@@ -114,10 +113,10 @@ const handleUnverify = async (user) => {
       fetchUsers(currentPage);
       setShowDeleteModal(false);
       setUserToDelete(null);
-      alert('User deleted successfully!');
+      toast.success('User deleted successfully!');
     } catch (err) {
       console.error('Error deleting user:', err);
-      alert('Failed to delete user. Please try again.');
+      toast.error('Failed to delete user. Please try again.');
     } finally {
       setIsDeleting(false);
     }
@@ -133,11 +132,6 @@ const handleUnverify = async (user) => {
       ? 'bg-green-500/20 text-green-400 border border-green-500/30'
       : 'bg-red-500/20 text-red-400 border border-red-500/30';
   };
-
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const startIndex = (currentPage - 1) * itemsPerPage;
 
@@ -175,7 +169,7 @@ const handleUnverify = async (user) => {
         </div>
         
 
-
+      <div className="flex gap-4">
         <NavLink to={'/manage-user-credit'} className="font-semibold px-3 py-3 text-xs rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black transition">
           Manage User Credits
         </NavLink>
@@ -183,6 +177,7 @@ const handleUnverify = async (user) => {
         <button  className="font-semibold px-3 py-3 text-xs rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black transition" onClick={() => setShowModal(true)}>
           Distribute Coins
         </button>
+      </div>
       </div>
 
       <div className="rounded-lg border border-gray-800" style={{ backgroundColor: '#1a1a1a' }}>

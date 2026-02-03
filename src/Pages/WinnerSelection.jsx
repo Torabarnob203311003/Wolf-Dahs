@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Search, ChevronLeft, ChevronRight, ArrowLeft, Megaphone, Download } from 'lucide-react';
 import axiosSecure from '../lib/axiosSecure';
-import AnnounceWinner from './AnnounceWinner';
+import AnnounceWinner from '../Pages/AnnounceWinner';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import toast from 'react-hot-toast';
 
 const WinnerSelection = () => {
     const [raffleId, setRaffleId] = useState('');
@@ -66,12 +67,12 @@ const WinnerSelection = () => {
             });
 
             if (response.data.success) {
-                alert('Winner selected successfully!');
+                toast.success('Winner selected successfully!');
                 window.location.href = '/winner-history';
             }
         } catch (err) {
             console.error('Error selecting winner:', err);
-            alert(err.response?.data?.message || 'Failed to select winner');
+            toast.error(err.response?.data?.message || 'Failed to select winner');
         }
     };
 
@@ -80,12 +81,12 @@ const WinnerSelection = () => {
             const response = await axiosSecure.post(`/winner/select-random-winner/${raffleId}`);
 
             if (response.data.success) {
-                alert(`Winner selected successfully! ${response.data.data?.winner?.name || 'Random winner'} has been chosen.`);
+                toast.success(`Winner selected successfully! ${response.data.data?.winner?.name || 'Random winner'} has been chosen.`);
                 window.location.href = '/winner-history';
             }
         } catch (err) {
             console.error('Error selecting random winner:', err);
-            alert(err.response?.data?.message || 'Failed to select random winner');
+            toast.error(err.response?.data?.message || 'Failed to select random winner');
         }
     }
 

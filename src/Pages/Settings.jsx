@@ -4,6 +4,7 @@ import axiosSecure from '../lib/axiosSecure';
 import placeholderImage from "/placeholder.jpg";
 import { useAuth } from '../context/AuthContext';
 import { ScaleLoader } from "react-spinners";
+import toast from 'react-hot-toast';
 
 function SettingsProfile() {
   const [activeTab, setActiveTab] = useState('Basic');
@@ -134,12 +135,12 @@ function BasicProfileSection({ userId }) {
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        toast.error('Please select an image file');
         return;
       }
 
       if (file.size > 20 * 1024 * 1024) {
-        alert('Image size should be less than 20MB');
+        toast.error('Image size should be less than 20MB');
         return;
       }
 
@@ -196,7 +197,7 @@ function BasicProfileSection({ userId }) {
       }
 
       if (!hasChanges) {
-        alert('No changes to save');
+        toast.error('No changes to save');
         setLoading(false);
         return;
       }
@@ -223,7 +224,7 @@ function BasicProfileSection({ userId }) {
       );
 
       if (response.data.success) {
-        alert('Profile updated successfully!');
+        toast.success('Profile updated successfully!');
         setUserData(response.data.data);
         setSelectedFile(null);
       }
@@ -232,7 +233,7 @@ function BasicProfileSection({ userId }) {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.errorSources?.[0]?.message ||
                           'Failed to update profile. Please try again.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -560,19 +561,19 @@ function ChangePasswordSection() {
 
       // Validate passwords
       if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-        alert('Please fill in all password fields');
+        toast.error('Please fill in all password fields');
         setLoading(false);
         return;
       }
 
       if (passwordData.newPassword !== passwordData.confirmPassword) {
-        alert('New password and confirmation do not match');
+        toast.error('New password and confirmation do not match');
         setLoading(false);
         return;
       }
 
       if (passwordData.newPassword.length < 6) {
-        alert('New password must be at least 6 characters long');
+        toast.error('New password must be at least 6 characters long');
         setLoading(false);
         return;
       }
@@ -597,7 +598,7 @@ function ChangePasswordSection() {
       );
 
       if (response.data.success) {
-        alert('Password changed successfully!');
+        toast.success('Password changed successfully!');
         setPasswordData({
           oldPassword: '',
           newPassword: '',
@@ -609,7 +610,7 @@ function ChangePasswordSection() {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.errorSources?.[0]?.message ||
                           'Failed to change password. Please try again.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -727,28 +728,28 @@ function CreateAdminSection() {
 
     // Validation
     if (!adminData.adminName || !adminData.email || !adminData.password || !adminData.confirmPassword) {
-      alert('Please fill in all fields');
+      toast.error('Please fill in all fields');
       setLoading(false);
       return;
     }
 
     if (adminData.password !== adminData.confirmPassword) {
-      alert('Password and confirmation do not match');
+      toast.error('Password and confirmation do not match');
       setLoading(false);
       return;
     }
 
     if (adminData.password.length < 8) {
-      alert('Password must be at least 8 characters long');
+      toast.error('Password must be at least 8 characters long');
       setLoading(false);
       return;
     }
 
-    console.log('Creating admin with data:', {
-      userName: adminData.adminName, // Make sure this matches backend expectation
-      email: adminData.email,
-      password: adminData.password,
-    });
+    // console.log('Creating admin with data:', {
+    //   userName: adminData.adminName, // Make sure this matches backend expectation
+    //   email: adminData.email,
+    //   password: adminData.password,
+    // });
 
     // API Call - Use the exact field names your backend expects
     const response = await axiosSecure.post('/users/create-admin', {
@@ -759,7 +760,7 @@ function CreateAdminSection() {
     });
 
     if (response.data.success) {
-      alert('Admin created successfully!');
+      toast.success('Admin created successfully!');
       // Reset form
       setAdminData({
         adminName: '',
@@ -774,7 +775,7 @@ function CreateAdminSection() {
     const errorMessage = error.response?.data?.message || 
                         error.response?.data?.errorSources?.[0]?.message ||
                         'Failed to create admin. Please try again.';
-    alert(errorMessage);
+    toast.error(errorMessage);
   } finally {
     setLoading(false);
   }
@@ -896,11 +897,11 @@ function NotificationsSection() {
       });
 
       if (response.data.success) {
-        alert('Notification settings updated successfully!');
+        toast.success('Notification settings updated successfully!');
       }
     } catch (error) {
       console.error('Error updating notifications:', error);
-      alert('Failed to update notification settings');
+      toast.error('Failed to update notification settings');
     }
   };
 
