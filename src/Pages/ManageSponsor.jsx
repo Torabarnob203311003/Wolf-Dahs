@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Header from "../components/ManagesSponsorCom/Header";
 import Stats from "../components/ManagesSponsorCom/Stats";
-import SponsorModel from "../components/ManagesSponsorCom/SponsorModel";
+// import SponsorModel from "../components/ManagesSponsorCom/SponsorModel";
 import AddSponsor from "../components/ManagesSponsorCom/AddSponsor";
 import DeleteSponsor from "../components/ManagesSponsorCom/DeleteSponsor";
 import EditSponsor from "../components/ManagesSponsorCom/EditSponsor";
+import axiosSecure from "../lib/axiosSecure";
 
 const ManageSponsor = () => {
   const [sponsors, setSponsors] = useState([
@@ -163,6 +164,15 @@ const ManageSponsor = () => {
     setSelectedSponsor(sponsor);
     setShowDeleteModal(true);
   };
+
+  const fetchSponsors = async () =>{
+    const response = await axiosSecure.get('/sponsors');
+    setSponsors(response.data.data);
+  }
+
+  useEffect(()=>{
+    fetchSponsors();
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white p-6">

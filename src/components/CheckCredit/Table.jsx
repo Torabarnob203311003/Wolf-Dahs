@@ -5,7 +5,8 @@ const Table = ({
   handlePageChange,
   getStatusBadge,
   setSelectedUser,
-  filteredUsers,
+  filteredUsers, 
+  meta
 }) => {
   return (
     <div className="bg-[#161616] rounded-xl border border-gray-800 overflow-hidden">
@@ -22,9 +23,9 @@ const Table = ({
               <th className="text-gray-400 py-4 px-6 text-left text-xs uppercase tracking-wider">
                 Credits
               </th>
-              <th className="text-gray-400 py-4 px-6 text-left text-xs uppercase tracking-wider">
+              {/* <th className="text-gray-400 py-4 px-6 text-left text-xs uppercase tracking-wider">
                 Last Transaction
-              </th>
+              </th> */}
               <th className="text-gray-400 py-4 px-6 text-left text-xs uppercase tracking-wider">
                 Status
               </th>
@@ -59,7 +60,7 @@ const Table = ({
                     </p>
                   </div>
                 </td>
-                <td className="py-4 px-6">
+                {/* <td className="py-4 px-6">
                   {user.lastTransaction ? (
                     <div>
                       <p className="text-sm font-medium">
@@ -72,9 +73,9 @@ const Table = ({
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">No transactions</p>
+                    <p className="text-sm text-gray-500">No transactions found</p>
                   )}
-                </td>
+                </td> */}
                 <td className="py-4 px-6">
                   <span
                     className={`${getStatusBadge(user.isBlocked)} px-3 py-1 rounded-full text-xs font-bold uppercase`}
@@ -104,16 +105,15 @@ const Table = ({
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-800 bg-[#1a1a1a]">
           <div className="text-sm text-gray-400">
-            Page {currentPage} of {totalPages} ({filteredUsers.length} total
+            Page {meta?.page} of {meta?.totalPages} ({meta?.total} total
             users)
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              // disabled={currentPage === 1}
               className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                 currentPage === 1
                   ? "bg-gray-800 text-gray-600 cursor-not-allowed"
@@ -124,7 +124,7 @@ const Table = ({
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              // disabled={currentPage === totalPages}
               className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                 currentPage === totalPages
                   ? "bg-gray-800 text-gray-600 cursor-not-allowed"
@@ -135,7 +135,6 @@ const Table = ({
             </button>
           </div>
         </div>
-      )}
     </div>
   );
 };
