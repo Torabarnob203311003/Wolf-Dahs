@@ -1,49 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import SponsorModel from "./SponsorModel";
 import toast from "react-hot-toast";
+import axiosSecure from "../../lib/axiosSecure";
 
 const EditSponsor = ({
-  formData,
+  // eslint-disable-next-line no-unused-vars
   sponsors,
   setSponsors,
   setShowEditModal,
   selectedSponsor,
   setSelectedSponsor,
-  setIsProcessing,
   resetForm,
 }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const handleSubmitEdit = async () => {
-    if (
-      !formData.name ||
-      !formData.logo ||
-      !formData.description ||
-      !formData.website ||
-      !formData.contribution
-    ) {
-      toast.error("Please fill in all required fields");
+    if (!selectedSponsor?.name || !selectedSponsor?.description) {
+      toast.error("Required fields missing");
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      // API call: await axiosSecure.patch(`/sponsors/${selectedSponsor.id}`, formData);
+      const fd = new FormData();
 
-      setSponsors(
-        sponsors.map((s) =>
-          s.id === selectedSponsor.id ? { ...formData, id: s.id } : s,
-        ),
+      // Only append fields that exist (PATCH semantics)
+      Object.entries(selectedSponsor).forEach(([key, value]) => {
+        if (value instanceof File || typeof value === "string") {
+          fd.append(key, value);
+        }
+      });
+
+      const { data } = await axiosSecure.patch(
+        `/sponsor/${selectedSponsor._id}`, // or .id based on backend
+        fd,
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
-      toast.success("Sponsor updated successfully!");
+      // Update UI with fresh DB result
+      setSponsors((prev) =>
+        prev.map((s) => (s._id === data.data._id ? data.data : s)),
+      );
+
+      toast.success("Sponsor updated successfully 🚀");
       setShowEditModal(false);
       setSelectedSponsor(null);
       resetForm();
     } catch (error) {
-      console.error(
-        "❌ Error updating sponsor:",
-        error.response?.data || error.message,
-      );
+      console.log(error);
       toast.error("Failed to update sponsor");
     } finally {
       setIsProcessing(false);
@@ -51,30 +56,23 @@ const EditSponsor = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50"
-      onClick={() => setShowEditModal(false)}
-    >
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50">
       <div
         className="bg-[#161616] rounded-xl border border-gray-800 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <h2 className="text-2xl font-bold">Edit Sponsor</h2>
-          <button
-            onClick={() => setShowEditModal(false)}
-            className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center"
-          >
-            ✕
-          </button>
+          <button onClick={() => setShowEditModal(false)}>✕</button>
         </div>
+
         <div className="p-6">
-          <SponsorModel
+          <SponsorModel 
             formData={selectedSponsor}
             setFormData={setSelectedSponsor}
-            resetForm={resetForm}
             onSubmit={handleSubmitEdit}
-            submitText="Save Changes"
+            submitText={isProcessing ? "Saving..." : "Save Changes"}
+            isProcessing={isProcessing}
           />
         </div>
       </div>

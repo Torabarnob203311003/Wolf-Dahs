@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import axiosSecure from "../../lib/axiosSecure";
 
 const DeleteSponsor = ({
   selectedSponsor,
@@ -12,13 +13,14 @@ const DeleteSponsor = ({
  
   const handleDelete = async () => {
     setIsProcessing(true);
-
+    
     try {
-      // API call: await axiosSecure.delete(`/sponsors/${selectedSponsor.id}`);
-
+      const response = await axiosSecure.delete(`/sponsor/${selectedSponsor._id}`);
+      console.log(response);
+      
       setSponsors(sponsors.filter((s) => s.id !== selectedSponsor.id));
 
-      toast.success("Sponsor deleted successfully!");
+      // toast.success("Sponsor deleted successfully!");
       setShowDeleteModal(false);
       setSelectedSponsor(null);
     } catch (error) {
