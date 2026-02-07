@@ -17,7 +17,7 @@ const SpinnerControlPanel = () => {
   useEffect(() => {
     const fetchSpinnerData = async () => {
       try {
-        const res = await axiosSecure.get('/spinner/get-spinner');
+        const res = await axiosSecure.get('/spinner/get-spinner-admin');
         console.log(res.data.data[0].jackpotSettings);
         
         if (res.data && res.data.data[0]._id) {
