@@ -202,26 +202,42 @@ const ManageSponsor = () => {
               key={sponsor.id}
               className="bg-[#161616] rounded-xl border border-gray-800 hover:border-[#E7B20E]/50 transition-all overflow-hidden"
             >
-              <div className="relative h-40 bg-gradient-to-br from-[#1f1f1f] to-[#161616] flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#E7B20E]/30">
-                  <img
-                    src={sponsor.logo}
-                    alt={sponsor.name}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative h-48 overflow-hidden">
+                {/* Background Image */}
+                <img
+                  src={sponsor.image}
+                  alt={sponsor.name}
+                  className="absolute inset-0 w-full h-48 object-fit object-fill"
+                />
+
+                {/* Dark Overlay (important for readability) */}
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
+                {/* Logo */}
+                <div className="relative z-10 flex items-center justify-center h-full">
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#E7B20E]/30 group-hover:border-[#E7B20E] transition-all group-hover:scale-110 duration-300">
+                    <img
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
 
-                <div className="absolute top-3 right-3">
+                {/* Category Badge */}
+                <div className="absolute top-4 right-4 z-20">
                   <span
-                    className={`${getCategoryBadge(sponsor.category)} px-3 py-1 rounded-full text-xs font-bold uppercase`}
+                    className={`${getCategoryBadge(sponsor.category)} px-4 py-1.5 rounded-full text-xs font-bold uppercase shadow-lg`}
                   >
                     {sponsor.category}
                   </span>
                 </div>
 
-                <div className="absolute top-3 left-3">
-                  <span className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full text-xs">
-                    {sponsor.type === "company" ? "🏢" : "👤"}
+                {/* Type Badge */}
+                <div className="absolute top-4 left-4 z-20">
+                  <span className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium border border-gray-700">
+                    {sponsor.type === "company"
+                      ? "🏢 Company"
+                      : "👤 Individual"}
                   </span>
                 </div>
               </div>
