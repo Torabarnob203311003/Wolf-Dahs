@@ -107,7 +107,7 @@ const SpinningHistoryPage = () => {
               <p className="text-gray-400 text-xs mb-1">Total Spins</p>
               <p className="text-white text-2xl font-bold">
                 {/* {overviewStats?.totalSpins || 0} */}
-                `${formatCurrencyShort(overviewStats?.totalSpins || 0)}`
+                {formatCurrencyShort(overviewStats?.totalSpins || 0)}
               </p>
             </div>
             <div className="bg-blue-500 rounded-lg p-2">
@@ -122,7 +122,7 @@ const SpinningHistoryPage = () => {
               <p className="text-gray-400 text-xs mb-1">Total Winnings</p>
               <p className="text-white text-2xl font-bold">
                 {/* £{overviewStats?.totalWinning || 0} */}
-                 `${formatCurrencyShort(overviewStats?.totalWinning || 0)}`
+                 £{formatCurrencyShort(overviewStats?.totalWinning || 0)}
               </p>
             </div>
             <div className="bg-green-500 rounded-lg p-2">
@@ -137,7 +137,7 @@ const SpinningHistoryPage = () => {
               <p className="text-gray-400 text-xs mb-1">Jackpot Wins</p>
               <p className="text-white text-2xl font-bold">
                 {/* {overviewStats?.totalJackpot || 0} */}
-                `${formatCurrencyShort(overviewStats?.totalJackpot || 0)}`
+                {formatCurrencyShort(overviewStats?.totalJackpot || 0)}
               </p>
             </div>
             <div className="bg-yellow-500 rounded-lg p-2">
