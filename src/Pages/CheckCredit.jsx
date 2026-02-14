@@ -61,10 +61,12 @@ const CheckCredit = () => {
     const fetchUsers = async () => {
       try {
         const res = await axiosSecure.get(
-          `/users/get-all-users?page=${currentPage}&limit=${itemsPerPage}`,
+          `/users/get-all-users?page=${currentPage}&limit=${itemsPerPage}&searchTerm=${searchQuery}`,
         );
         setUsers(res.data?.data ?? []);
         setMeta(res.data?.meta ?? null);
+        console.log(res);
+        
       } catch (err) {
         console.error("Failed to fetch users", err);
         setUsers([]);
@@ -72,7 +74,7 @@ const CheckCredit = () => {
     };
 
     fetchUsers();
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   useEffect(() => {
     setCurrentPage(1);

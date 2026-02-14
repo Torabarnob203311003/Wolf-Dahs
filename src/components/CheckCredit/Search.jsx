@@ -5,7 +5,7 @@ const Search = ({ searchQuery, setSearchQuery, setCurrentPage }) => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search by name, email, or phone..."
+              placeholder="Search by name, email..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
