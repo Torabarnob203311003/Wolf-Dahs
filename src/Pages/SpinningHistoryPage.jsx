@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
-import {  PoundSterling, Trophy, } from 'lucide-react';
-import { ScaleLoader } from 'react-spinners';
-import axiosSecure from '../lib/axiosSecure';
+import React, { useEffect, useState } from "react";
+import { PoundSterling, Trophy } from "lucide-react";
+import { ScaleLoader } from "react-spinners";
+import axiosSecure from "../lib/axiosSecure";
 
 const SpinningHistoryPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterPrize, setFilterPrize] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterPrize, setFilterPrize] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [overviewStats, setOverviewStats] = useState(null);
   const [spinHistory, setSpinHistory] = useState([]);
@@ -19,8 +19,10 @@ const SpinningHistoryPage = () => {
   const fetchSpinHistoryOverview = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await axiosSecure.get(`/spinner/get-admin-spinning-history?page=${page}`);
-      
+      const response = await axiosSecure.get(
+        `/spinner/get-admin-spinning-history?page=${page}`,
+      );
+
       if (response.data.success && response.data.data) {
         const resData = response.data.data;
         const spins = resData.data.map((spin) => ({
@@ -34,7 +36,7 @@ const SpinningHistoryPage = () => {
         setTotalPages(resData.meta.totalPages);
       }
     } catch (err) {
-      console.log('Error fetching spin history:', err);
+      console.log("Error fetching spin history:", err);
     } finally {
       setLoading(false);
     }
@@ -42,13 +44,15 @@ const SpinningHistoryPage = () => {
 
   const fetchOverviewStates = async () => {
     try {
-      const response = await axiosSecure.get('/spinner/admin-spinning-history-overview');
+      const response = await axiosSecure.get(
+        "/spinner/admin-spinning-history-overview",
+      );
       console.log("Overview state", response.data.data);
       setOverviewStats(response.data.data);
     } catch (error) {
-      console.log('Error fetching overview stats:', error);
+      console.log("Error fetching overview stats:", error);
     }
-  }
+  };
 
   // Fetch on mount and whenever page, searchTerm, or filterPrize changes
   useEffect(() => {
@@ -57,12 +61,13 @@ const SpinningHistoryPage = () => {
   }, [currentPage, searchTerm, filterPrize]);
 
   const getPrizeBadgeColor = (prize) => {
-    if (prize === 'Jackpot') return 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white';
-    if (prize === '$50') return 'bg-yellow-500 text-white';
-    if (prize === '$25') return 'bg-blue-500 text-white';
-    if (prize === '$5') return 'bg-purple-500 text-white';
-    if (prize === '$2' || prize === '$1') return 'bg-green-500 text-white';
-    return 'bg-gray-600 text-white';
+    if (prize === "Jackpot")
+      return "bg-gradient-to-r from-yellow-400 to-orange-500 text-white";
+    if (prize === "$50") return "bg-yellow-500 text-white";
+    if (prize === "$25") return "bg-blue-500 text-white";
+    if (prize === "$5") return "bg-purple-500 text-white";
+    if (prize === "$2" || prize === "$1") return "bg-green-500 text-white";
+    return "bg-gray-600 text-white";
   };
 
   if (loading) {
@@ -73,12 +78,25 @@ const SpinningHistoryPage = () => {
     );
   }
 
+  const formatCurrencyShort = (value) => {
+    if (value >= 1000000000)
+      return `${(value / 1000000000).toFixed(1)}B`;
+
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+
+    if (value >= 1_000) return `${(value / 1000).toFixed(1)}K`;
+
+    return `${value.toLocaleString("en-GB")}`;
+  };
+
   return (
     <div className="min-h-screen bg-[#0d0d0d] p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-white text-2xl font-bold mb-2">Spinning History</h1>
-        <p className="text-gray-400 text-sm">View and manage all lucky wheel spin records</p>
+        <p className="text-gray-400 text-sm">
+          View and manage all lucky wheel spin records
+        </p>
       </div>
 
       {/* Statistics */}
@@ -87,7 +105,10 @@ const SpinningHistoryPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-xs mb-1">Total Spins</p>
-              <p className="text-white text-2xl font-bold">{overviewStats?.totalSpins || 0}</p>
+              <p className="text-white text-2xl font-bold">
+                {/* {overviewStats?.totalSpins || 0} */}
+                `${formatCurrencyShort(overviewStats?.totalSpins || 0)}`
+              </p>
             </div>
             <div className="bg-blue-500 rounded-lg p-2">
               <Trophy className="text-white" size={20} />
@@ -99,7 +120,10 @@ const SpinningHistoryPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-xs mb-1">Total Winnings</p>
-              <p className="text-white text-2xl font-bold">${overviewStats?.totalWinning || 0}</p>
+              <p className="text-white text-2xl font-bold">
+                {/* £{overviewStats?.totalWinning || 0} */}
+                 `${formatCurrencyShort(overviewStats?.totalWinning || 0)}`
+              </p>
             </div>
             <div className="bg-green-500 rounded-lg p-2">
               <PoundSterling className="text-white" size={20} />
@@ -111,7 +135,10 @@ const SpinningHistoryPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-xs mb-1">Jackpot Wins</p>
-              <p className="text-white text-2xl font-bold">{overviewStats?.totalJackpot || 0}</p>
+              <p className="text-white text-2xl font-bold">
+                {/* {overviewStats?.totalJackpot || 0} */}
+                `${formatCurrencyShort(overviewStats?.totalJackpot || 0)}`
+              </p>
             </div>
             <div className="bg-yellow-500 rounded-lg p-2">
               <Trophy className="text-white" size={20} />
@@ -166,29 +193,54 @@ const SpinningHistoryPage = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800 bg-[#161616]">
-                <th className="text-gray-400 text-left py-3 px-4 text-xs">ID</th>
-                <th className="text-gray-400 text-left py-3 px-4 text-xs">USER NAME</th>
-                <th className="text-gray-400 text-left py-3 px-4 text-xs">EMAIL</th>
-                <th className="text-gray-400 text-left py-3 px-4 text-xs">PRIZE</th>
-                <th className="text-gray-400 text-left py-3 px-4 text-xs">VALUE</th>
-                <th className="text-gray-400 text-left py-3 px-4 text-xs">DATE & TIME</th>
+                <th className="text-gray-400 text-left py-3 px-4 text-xs">
+                  ID
+                </th>
+                <th className="text-gray-400 text-left py-3 px-4 text-xs">
+                  USER NAME
+                </th>
+                <th className="text-gray-400 text-left py-3 px-4 text-xs">
+                  EMAIL
+                </th>
+                <th className="text-gray-400 text-left py-3 px-4 text-xs">
+                  PRIZE
+                </th>
+                <th className="text-gray-400 text-left py-3 px-4 text-xs">
+                  VALUE
+                </th>
+                <th className="text-gray-400 text-left py-3 px-4 text-xs">
+                  DATE & TIME
+                </th>
               </tr>
             </thead>
             <tbody>
               {spinHistory.map((spin) => (
-                <tr key={spin.id} className="border-b border-gray-800 hover:bg-[#252525] transition-colors">
+                <tr
+                  key={spin.id}
+                  className="border-b border-gray-800 hover:bg-[#252525] transition-colors"
+                >
                   <td className="py-3 px-4 text-white text-xs">{spin.id}</td>
-                  <td className="py-3 px-4 text-gray-400 text-xs font-mono">{spin.userName}</td>
-                  <td className="py-3 px-4 text-gray-400 text-xs font-mono">{spin.email}</td>
+                  <td className="py-3 px-4 text-gray-400 text-xs font-mono">
+                    {spin.userName}
+                  </td>
+                  <td className="py-3 px-4 text-gray-400 text-xs font-mono">
+                    {spin.email}
+                  </td>
                   <td className="py-3 px-4">
-                    <span className={`${getPrizeBadgeColor(spin.prize)} px-3 py-1 rounded-full text-xs font-semibold inline-block`}>
+                    <span
+                      className={`${getPrizeBadgeColor(spin.prize)} px-3 py-1 rounded-full text-xs font-semibold inline-block`}
+                    >
                       {spin.prize}
                     </span>
                   </td>
-                  <td className={`py-3 px-4 text-xs font-semibold ${spin.prizeValue > 0 ? 'text-green-400' : 'text-gray-500'}`}>
+                  <td
+                    className={`py-3 px-4 text-xs font-semibold ${spin.prizeValue > 0 ? "text-green-400" : "text-gray-500"}`}
+                  >
                     £{spin.prizeValue}
                   </td>
-                  <td className="py-3 px-4 text-white text-xs">{spin.spinDate}</td>
+                  <td className="py-3 px-4 text-white text-xs">
+                    {spin.spinDate}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -196,15 +248,14 @@ const SpinningHistoryPage = () => {
         </div>
 
         {/* Pagination */}
-       <div className="bg-[#161616] px-5 py-4 border-t border-gray-800 flex items-center justify-between">
+        <div className="bg-[#161616] px-5 py-4 border-t border-gray-800 flex items-center justify-between">
           <span className="text-gray-400 text-xs">
             Page {currentPage} of {totalPages}
           </span>
 
           <div className="flex items-center gap-1.5">
-
             <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className="bg-[#0f0f0f] text-white px-3 py-1.5 rounded text-xs hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -212,24 +263,24 @@ const SpinningHistoryPage = () => {
             </button>
 
             {(() => {
-              const window = 3
-              const pages = []
-              const start = Math.max(1, currentPage - window)
-              const end = Math.min(totalPages, currentPage + window)
+              const window = 3;
+              const pages = [];
+              const start = Math.max(1, currentPage - window);
+              const end = Math.min(totalPages, currentPage + window);
 
-              if (start > 1) pages.push(1, '...')
-              for (let i = start; i <= end; i++) pages.push(i)
-              if (end < totalPages) pages.push('...', totalPages)
+              if (start > 1) pages.push(1, "...");
+              for (let i = start; i <= end; i++) pages.push(i);
+              if (end < totalPages) pages.push("...", totalPages);
 
               return pages.map((p, i) =>
-                typeof p === 'number' ? (
+                typeof p === "number" ? (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(p)}
                     className={`px-3 py-1.5 rounded text-xs transition-colors ${
                       currentPage === p
-                        ? 'bg-[#FACC15] text-black'
-                        : 'bg-[#0f0f0f] text-white hover:text-black hover:bg-[#f1c202]'
+                        ? "bg-[#FACC15] text-black"
+                        : "bg-[#0f0f0f] text-white hover:text-black hover:bg-[#f1c202]"
                     }`}
                   >
                     {p}
@@ -238,21 +289,19 @@ const SpinningHistoryPage = () => {
                   <span key={i} className="text-gray-500 text-xs px-2">
                     {p}
                   </span>
-                )
-              )
+                ),
+              );
             })()}
 
             <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className="bg-[#0f0f0f] text-white px-3 py-1.5 rounded text-xs hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
-
           </div>
         </div>
-
       </div>
     </div>
   );
